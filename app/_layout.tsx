@@ -1,9 +1,15 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
 export default function Layout() {
   return (
-    <View>
+    <View style={{
+      backgroundColor: '#121212',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
+      width: '100%'
+    }}>
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: '#242424' },

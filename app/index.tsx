@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Button, FlatList } from 'react-native'
-/*import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { Link } from 'expo-router'
 
@@ -9,9 +9,9 @@ import Header from '../src/components/header'
 import AddButton from '../src/components/add_button'
 import Card from '../src/components/card'
 import Screen from '../src/components/screen'
-*/
+
 export default function Index() {
-  /* const [data, setData] = useState(null);
+   const [data, setData] = useState(null);
  
    useEffect(() => {
      setData(generateNotes(10));
@@ -33,15 +33,8 @@ export default function Index() {
        <AddButton />
      </Screen>
    );
-   */
-
-  return (
-    <View>
-      <Text style={{ color: "#0000" }}>Hola a todo</Text>
-    </View>
-  )
 }
-/*
+
 const styles = StyleSheet.create({
   list: {
     flex: 1,
@@ -50,4 +43,3 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   }
 });
-*/

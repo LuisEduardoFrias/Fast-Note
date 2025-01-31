@@ -1,14 +1,16 @@
 import { Uid } from './uid'
 
-export type TypeImage = { uri: string };
+export type TypeSize = { w: number, h: number };
+export type TypeImage = { uri: string, size: TypeSize };
 export type TypeText = { text: string };
 export type TypeList = { list: { isChecked: boolean, text: string }[] }
 
 export type TypeNote = {
   key: Uid,
   title?: string,
-  tags: string[],
-  data: (TypeText | TypeImage | TypeList)[],
+  data?: (TypeText | TypeImage | TypeList)[],
   color?: string,
+  tags?: string[],
   remove?: Date
+  archive: boolean
 }

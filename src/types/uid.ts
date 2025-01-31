@@ -1,2 +1,1 @@
-
-export type Uid = `${string}-${string}-${string}-${string}-${string}`;
+export type TypeUid = `${string}-${string}-${string}-${string}-${string}`;
