@@ -1,7 +1,6 @@
-import { Image, View, Pressable, StyleSheet, StatusBar, Animated, Dimensions } from 'react-native'
-import Slider from '@react-native-community/slider'
-import { useState } from 'react'
-import { DeleteIcon } from '../svgs'
+import { Image, Text, View, Pressable, StyleSheet, StatusBar, Animated, Dimensions } from 'react-native'
+/*import { useState } from 'react'
+import { DeleteIcon } from '../icons'
 
 type TypeImage = {
   uri: string
@@ -62,4 +61,13 @@ const styles = StyleSheet.create({
     height: `${200}`,
     marginBottom: 5
   }),
-})
+})*/
+
+export default function ImageNote({ uri, onDelete }: TypeImage) {
+
+  return (
+    <View>
+<Text>Welcome to React Native!</Text>
+      </View>
+  );
+}

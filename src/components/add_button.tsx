@@ -1,41 +1,27 @@
 import { Pressable, StyleSheet, Text } from 'react-native'
-import { AddIcon } from '../svgs'
-import { useState, useEffect } from "react"
+import { AddIcon } from '../icons'
 
 export default function AddButton({ onPress }) {
-  const [press, setPress] = useState(false);
-  const [isPressed, setIsPressed] = useState(true);
-
-  useEffect(() => {
-    if (onPress) onPress();
-  }, [press])
-
   return (
     <Pressable
-      style={styles.button}
-      onPressIn={() => setIsPressed(false)}
-      onPressOut={() => setIsPressed(true)}
-      onPress={() => setPress(!press)}
+      style={({ pressed }) => [
+        {
+          borderRadius: 20,
+          backgroundColor: '#25fff9',
+          width: pressed ? 68 : 70,
+          height: pressed ? 68 : 70,
+          position: 'absolute',
+          right: 20,
+          bottom: 20,
+          justifyContent: 'center',
+          alignItems: 'center',
+          opacity: pressed ? 0.7 : 1,
+        }
+      ]}
+      onPress={() => (!onPress) ?? onPress()}
     >
-      <AddIcon {...styles.changeState(isPressed)} />
+      <AddIcon size={60} />
     </Pressable>
   )
 }
 
-const styles = StyleSheet.create({
-  button: ({ pressed }) => [
-    {
-      borderRadius: 20,
-      backgroundColor: '#26a498',
-      width: 70,
-      height: 70,
-      position: 'absolute',
-      right: 20,
-      bottom: 20,
-    },
-    pressed && {
-      opacity: 0.7,
-    }
-  ],
-  changeState: (isPressed) => isPressed ? { fill: "#117c71" } : { fill: "#1bd5c3" },
-});

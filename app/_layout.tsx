@@ -1,20 +1,15 @@
-import { Stack } from 'expo-router';
-import { View, Text } from 'react-native';
+import { Stack } from 'expo-router'
+import { View, Text } from 'react-native'
+import Header from '../src/components/header'
+import 'core-js/actual/structured-clone';
+import '../src/warehouse'
 
 export default function Layout() {
   return (
-    <View style={{
-      backgroundColor: '#121212',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100%',
-      width: '100%'
-    }}>
+    <View style={{ flex: 1 }}>
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: '#242424' },
-          headerTintColor: '#fff',
-          headerTitle: ""
         }}
       />
     </View>

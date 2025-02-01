@@ -1,6 +1,6 @@
-import { warehouse, update } from 'subscriber_state'
+import { createWarehouse, update } from 'subscriber_state'
 import { TypeNote, TypeUid } from '../types'
-import { getNotes, removeNote, deleteNote } from '../services/keep'
+import { getNotes, removeNote as removeNoteKeep, deleteNote as deleteNoteKeep } from '../services/keep'
 
 type TypeState = {
   notes: TypeNote[],
@@ -41,6 +41,7 @@ const selectNote = (key: TypeUid) => {
 };
 
 const clearSelectedNotes = () => {
+  console.log("goo")
   update((state: TypeState) => {
     state.selectedNotes = [];
     return state;
@@ -156,7 +157,7 @@ const addNote = (note: TypeNote) => {
 
 const removeNote = (key: TypeUid) => {
   (async () => {
-    const datetime = await removeNote(key);
+    const datetime = await removeNoteKeep(key);
 
     update((state: TypeState) => {
       const index = state.notes.findIndex((note: typeNote) => note.key === key);
@@ -168,7 +169,7 @@ const removeNote = (key: TypeUid) => {
 
 const deleteNote = (key: TypeUid) => {
   (async () => {
-    await deleteNote(key);
+    await deleteNoteKeep(key);
 
     update((state: TypeState) => {
       const index = state.notes.findIndex((note: typeNote) => note.key === key);
@@ -202,29 +203,33 @@ const removeNoteInEdition = () => {
 
 /////////////////////////////
 
-(async () => {
-  //feching para octener las notas de lss nuves
+// (async () => {
+//   //feching para octener las notas de lss nuves
+//   const notes = await getNotes();
+// })()
 
-  const notes = await getNotes();
+createWarehouse({
+  notes: [],
+  selectedNotes: [{ key: 'note 1' },
+  { key: 'note 2' },
+  { key: 'note 2' },
+  { key: 'note 2' },
+  { key: 'note 2' },
+  ],
+  noteInEdition: null,
 
-  warehouse({
-    notes: notes && [],
-    selectedNotes: [],
-    noteInEdition: null,
-
-    selectNote,
-    clearSelectedNotes,
-    addTag,
-    archive,
-    addColor,
-    addTagOfSelect,
-    archiveOfSelect,
-    addColorOfSelect,
-    addNote,
-    removeNote,
+  selectNote,
+  clearSelectedNotes,
+  addTag,
+  archive,
+  addColor,
+  addTagOfSelect,
+  archiveOfSelect,
+  addColorOfSelect,
+  addNote,
+  removeNote,
   deleteNote,
-    updateNote,
-    addNoteInEdition,
-    removeNoteInEdition
-  })
-})()
+  updateNote,
+  addNoteInEdition,
+  removeNoteInEdition
+})

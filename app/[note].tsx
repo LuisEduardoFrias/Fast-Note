@@ -1,5 +1,5 @@
 import { Text, ScrollView, View, Image, StyleSheet, Pressable, FlatList } from 'react-native'
-import { TypeNote, TypeText, TypeImage, TypeList } from '../src/types'
+/*import { TypeNote, TypeText, TypeImage, TypeList } from '../src/types'
 import CheckBox from '../src/components/checkbox'
 import ImageNote from '../src/components/image_note'
 import { Back } from '../src/svgs';
@@ -88,3 +88,21 @@ const styles = StyleSheet.create({
       3, borderRadius: 5,
   }
 })
+*/
+
+export default function Note() {
+
+  return (
+    <View style={{
+      borderColor: '#ffffff7f',
+      borderBottomWidth: 2,
+      marginBottom: 10,
+      paddingTop: 10,
+      paddingLeft: 10,
+      paddingRigth: 10,
+    }}>
+      <Text style={[{ color: '#fff', fontWeight: '800', }]} >{'data?.title'}</Text>
+    </View>
+
+  )
+}
