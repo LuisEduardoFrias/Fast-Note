@@ -1,6 +1,7 @@
 import { createWarehouse, update } from 'subscriber_state'
 import { TypeNote, TypeUid } from '../types'
 import { getNotes, removeNote as removeNoteKeep, deleteNote as deleteNoteKeep } from '../services/keep'
+import uuid from 'react-native-uuid';
 
 type TypeState = {
   notes: TypeNote[],
@@ -17,12 +18,14 @@ type TypeActions = {
   addTagOfSelect: (tag: string) => void,
   archiveOfSelect: () => void,
   addColorOfSelect: (color: string) => void,
-  addNote: (note: TypeNote) => void,
+  removeNoteOfSelect: () => void,
+  addNote: () => TypeUid,
   removeNote: (key: TypeUid) => void,
   deleteNote: (key: TypeUid) => void,
   updateNote: (note: TypeNote) => void,
   addNoteInEdition: (note?: TypeNote) => void,
   removeNoteInEdition: () => void,
+  search: (value: string) => void,
 }
 
 /////////////////////////////
@@ -41,11 +44,7 @@ const selectNote = (key: TypeUid) => {
 };
 
 const clearSelectedNotes = () => {
-  console.log("goo")
-  update((state: TypeState) => {
-    state.selectedNotes = [];
-    return state;
-  })
+  update((state: TypeState) => ({ ...state, selectedNotes: [] }));
 };
 
 const addTag = (key: TypeUid, tag: string) => {
@@ -126,8 +125,8 @@ const archiveOfSelect = () => {
   update((state: TypeState) => {
     state.selectedNotes.forEach((note: TypeNote) => {
       state.notes[note]?.archive ?
-        state.notes[index].archive = false :
-        state.notes[index].archive = true;
+        state.notes[note].archive = false :
+        state.notes[note].archive = true;
     })
 
     return state;
@@ -136,23 +135,49 @@ const archiveOfSelect = () => {
 
 const addColorOfSelect = (color: string) => {
   update((state: TypeState) => {
-    state.selectedNotes.forEach((note: TypeNote) => {
+    state.selectedNotes.forEach((uid: TypeUid) => {
+      //TODO trabajat con uid
       const isEquialColor = state.notes[note]?.color === color;
-
+      console.log(color, '-check')
       isEquialColor ?
-        state.notes[index].color = null :
-        state.notes[index].color = color;
+        state.notes[note].color = null :
+        state.notes[note].color = color;
     });
 
     return state;
   })
 };
 
-const addNote = (note: TypeNote) => {
+const removeNoteOfSelect = () => {
+  (async () => {
+    const datetime = await removeNoteKeep(key);
+
+    update((state: TypeState) => {
+      state.selectedNotes.forEach((note: TypeNote) => {
+        state.notes[note].remove = datetime;
+      });
+
+      return state;
+    })
+  })()
+}
+
+const addNote = () => {
+  const key = uuid.v4();
+
   update((state: TypeState) => {
-    state.notes.push(note);
+    state.notes.push({
+      key,
+      title: null,
+      data: [],
+      color: null,
+      tags: [],
+      remove: null,
+      archive: false
+    });
     return state;
   })
+  return key;
 };
 
 const removeNote = (key: TypeUid) => {
@@ -201,6 +226,18 @@ const removeNoteInEdition = () => {
   })
 };
 
+const search = (value: string) => {
+  update((state: TypeState) => {
+
+    state.filtered = state.notes.filter((note: TypeNote) => {
+      return note.title.toLowerCase().includes(value.toLowerCase()) ||
+        note.dsta.toLowerCase().includes(value.toLowerCase());
+    });
+
+    return state;
+  })
+};
+
 /////////////////////////////
 
 // (async () => {
@@ -209,13 +246,147 @@ const removeNoteInEdition = () => {
 // })()
 
 createWarehouse({
-  notes: [],
-  selectedNotes: [{ key: 'note 1' },
-  { key: 'note 2' },
-  { key: 'note 2' },
-  { key: 'note 2' },
-  { key: 'note 2' },
+  notes: [
+    {
+      key: 'note 1',
+      title: 'Estudio 1',
+      data: [
+        { text: "texto nuevo 1 $checked$" },
+        { text: "texto nuevo 2 $check$" },
+        {
+          list: [
+            { isChecked: false, text: 'Estilo 1' },
+            { isChecked: false, text: 'Estilo 2' },
+            { isChecked: false, text: 'Estilo 3' },
+          ],
+          withCheck: false
+        },
+        { text: "texto nuevo 3" },
+        {
+          list: [
+            { isChecked: false, text: 'leer' },
+            { isChecked: true, text: 'limpiar' },
+            { isChecked: true, text: 'orar' },
+            { isChecked: true, text: 'escuchar musica' },
+          ],
+          withCheck: true
+        },
+      ],
+      color: "#b8e3bb9a",
+      tags: ['biblia', 'pastor'],
+      remove: null,
+      archive: false
+    },
+    {
+      key: 'note 2',
+      title: 'Estudio 2',
+      data: [
+        { text: "texto nuevo 1 $checked$" },
+        {
+          list: [
+            { isChecked: false, text: 'Estilo 1' },
+            { isChecked: false, text: 'Estilo 2' },
+            { isChecked: false, text: 'Estilo 3' },
+          ],
+          withCheck: false
+        },
+        { text: "texto nuevo 3" },
+      ],
+      color: null,
+      tags: ['musica'],
+      remove: null,
+      archive: false
+    },
+    {
+      key: 'note 3',
+      title: 'Estudio 3',
+      data: [
+        { text: "texto nuevo 1 $checked$" },
+        { text: "texto nuevo 2 $check$" },
+        {
+          list: [
+            { isChecked: false, text: 'Estilo 1' },
+            { isChecked: false, text: 'Estilo 3' },
+          ],
+          withCheck: false
+        },
+        { text: "texto nuevo 3" },
+        { text: "texto nuevo 4" },
+        { text: "texto nuevo 5" },
+      ],
+      color: "#b8e1e39a",
+      tags: ['otros', 'nuevo'],
+      remove: null,
+      archive: true
+    },
+    {
+      key: 'note 4',
+      title: 'Estudio 4',
+      data: [
+        { text: "texto nuevo 1 $checked$" },
+        { text: "texto nuevo 2 $check$" },
+        {
+          list: [
+            { isChecked: false, text: 'Estilo 1' },
+            { isChecked: false, text: 'Estilo 3' },
+          ],
+          withCheck: false
+        },
+        { text: "texto nuevo 3" },
+        { text: "texto nuevo 4" },
+        { text: "texto nuevo 5" },
+      ],
+      color: null,
+      tags: ['otros 2', 'nuevo 2'],
+      remove: new Date(),
+      archive: false
+    },
+    {
+      key: 'note 5',
+      title: 'Estudio 5',
+      data: [
+        { text: "texto nuevo 1 $checked$" },
+        { text: "texto nuevo 2 $check$" },
+        {
+          list: [
+            { isChecked: false, text: 'Estilo 1' },
+            { isChecked: false, text: 'Estilo 3' },
+          ],
+          withCheck: false
+        },
+        { text: "texto nuevo 3" },
+        { text: "texto nuevo 4" },
+        { text: "texto nuevo 5" },
+      ],
+      color: "#e3b8b89a",
+      tags: ['otros 9'],
+      remove: null,
+      archive: false
+    },
+    {
+      key: 'note 6',
+      title: 'Estudio 6',
+      data: [
+        { text: "texto nuevo 1 $checked$" },
+        { text: "texto nuevo 2 $check$" },
+        {
+          list: [
+            { isChecked: false, text: 'Estilo 1' },
+            { isChecked: false, text: 'Estilo 3' },
+          ],
+          withCheck: false
+        },
+        { text: "texto nuevo 3" },
+        { text: "texto nuevo 4" },
+        { text: "texto nuevo 5" },
+      ],
+      color: null,
+      tags: ['estilos'],
+      remove: null,
+      archive: false
+    },
   ],
+  selectedNotes: [],
   noteInEdition: null,
 
   selectNote,
@@ -226,10 +397,12 @@ createWarehouse({
   addTagOfSelect,
   archiveOfSelect,
   addColorOfSelect,
+  removeNoteOfSelect,
   addNote,
   removeNote,
   deleteNote,
   updateNote,
   addNoteInEdition,
-  removeNoteInEdition
+  removeNoteInEdition,
+  search
 })

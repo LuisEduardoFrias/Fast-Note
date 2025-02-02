@@ -18,7 +18,7 @@ export default function AddButton({ onPress }) {
           opacity: pressed ? 0.7 : 1,
         }
       ]}
-      onPress={() => (!onPress) ?? onPress()}
+      onPress={() => {if(onPress)  onPress()}}
     >
       <AddIcon size={60} />
     </Pressable>
