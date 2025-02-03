@@ -27,8 +27,8 @@ export default function Header() {
         </View>
 
         <View className="flex-row gap-3 items-center w-min" >
-          <TagIcon size={20} onPress={() => addTagOfSelect('new tags')} />
-          <ColorIcon size={20} onPress={() => addColorOfSelect("#be87f18b")} />
+          <TagIcon size={20} className="active:bg-amber-400" onPress={() => addTagOfSelect('new tags')} />
+          <ColorIcon size={20} className="active:bg-amber-400" onPress={() => addColorOfSelect("#be87f18b")} />
           <ArchiveIcon size={20} onPress={() => archiveOfSelect()} />
           <DeleteIcon size={20} onPress={() => removeNoteOfSelect()} />
         </View>

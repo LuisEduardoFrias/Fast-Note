@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
-
+import { RemoveIcon } from '../icons'
 
 type TypeCheckStyle = { check?: CSSProprties, text?: CSSProprties }
 type TypeCheckBox = {
   text: string,
   checked?: boolean,
   style?: TypeCheckStyle,
+  withCheck?: boolean,
+  onChange?: (value) => void,
   value?: (value: boolean) => void
 }
 
-export default function CheckBox({ checked, value, text, style }: TypeCheckBox) {
+export default function CheckBox({ checked, value, withCheck, onChange, text, style }: TypeCheckBox) {
   const [isChecked, setIsChecked] = useState(checked);
 
   useEffect(() => {
@@ -23,8 +25,9 @@ export default function CheckBox({ checked, value, text, style }: TypeCheckBox) 
 
   return (
     <TouchableOpacity style={styles.container} onPress={toggleCheckbox}>
-      <View style={[styles.checkbox, isChecked && styles.checked]} />
+      {withCheck ? <View style={[styles.checkbox, isChecked && styles.checked]} /> : null}
       <Text style={[styles.label]}>{text}</Text>
+      <RemoveIcon />
     </TouchableOpacity>
   );
 };

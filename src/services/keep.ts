@@ -50,7 +50,7 @@ export const putNote = async (obj: TypeNote) => {
   return await setData(data);
 };
 
-export const removeNote = async (key: Uid) => {
+export const removeNote = async (key: Uid,datetime:Date ) => {
   const data = await getData()
 
   if (!data)
@@ -61,7 +61,6 @@ export const removeNote = async (key: Uid) => {
   if (index === -1)
     return null;
 
-  const datetime = new Date();
   data[index].remove = datetime;
 
   try {

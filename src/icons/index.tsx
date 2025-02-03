@@ -46,6 +46,9 @@ export const TextIcon = (props: TypeIcon) =>
 export const ArchiveIcon = (props: TypeIcon) =>
   (<Ionicons name="archive" size={24} color="#ffffff" {...props} />);
 
+export const RemoveIcon = (props: TypeIcon) =>
+  (<Ionicons name="remove-circle" size={24} color="#ffffff" {...props} />);
+
 export const DeleteIcon = (props: TypeIcon) =>
   (<MaterialCommunityIcons name="delete" size={24} color="#ffffff" {...props} />);
 
