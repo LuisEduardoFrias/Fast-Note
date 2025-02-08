@@ -5,8 +5,12 @@ module.exports = {
     "./src/components/**/*.tsx",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'gray-300.5': 'rgba(186,186,186,0.612)',
+        'dark-theme': 'rgb(36,36,36)',
+      }
+    },
   },
   plugins: [],
 }
-

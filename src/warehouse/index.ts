@@ -353,7 +353,7 @@ createWarehouse({
       data: [
         { key: 'zuwil', text: "texto nuevo 1 $checked$	&#x2705" },
         { key: 'hd7zu', text: "otro ejemplo $check$ &#x274e; " },
-        { key: 'wjd', text: "release the Alt key and you get a ✅ Heavy White Check Mark." },
+        { key: 'wjd', text: "release the Alt key and you get a ✅ Heavy White 🟩 heck Mark." },
         { key: 'dywz', text: "To write the Negative Squared Cross Mark symbol ❎ on keyboard using ALT codes; ALT+10062, just hold down the ALT key while typing the alt key code 10062. You have to use the numeric keypad of your keyboard. If you don not have numeric keypad, hold down the Fn and ALT keys while typing the alt code number." },
         {
           key: 'hd8e',
@@ -369,6 +369,7 @@ createWarehouse({
         { key: 'jdile', text: "jajaj haybque ver" },
         { key: 'hr6', text: "mas escrituras" },
         {
+          title: 'sin titulo',
           key: 'j26i',
           list: [
             { key: 'o29zk', isChecked: false, text: 'otros 1' },

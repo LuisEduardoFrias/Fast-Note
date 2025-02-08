@@ -1,55 +1,44 @@
-import { useState, useEffect } from 'react';
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { TouchableOpacity, TextInput, View, StyleSheet } from 'react-native';
 import { RemoveIcon } from '../icons'
 
-type TypeCheckStyle = { check?: CSSProprties, text?: CSSProprties }
 type TypeCheckBox = {
   text: string,
-  checked?: boolean,
-  style?: TypeCheckStyle,
-  withCheck?: boolean,
-  onChange?: (value) => void,
-  value?: (value: boolean) => void
+  checked: boolean,
+  withCheck: boolean,
+  onFocus: boolean,
+  remove: () => void,
+  onSubmit: () => void,
+  value: (value: { checked: boolean, text: string }) => void
 }
 
-export default function CheckBox({ checked, value, withCheck, onChange, text, style }: TypeCheckBox) {
+export default function CheckBox({ text, checked, onFocus, onSubmit, value, withCheck, remove }: TypeCheckBox) {
   const [isChecked, setIsChecked] = useState(checked);
+  const [textValue, setTextValue] = useState(text);
+  const inputRef = useRef(null);
 
   useEffect(() => {
-    if (value) value(isChecked);
-  }, [isChecked]);
+    value({ checked: isChecked, text: textValue });
+  }, [isChecked, textValue]);
 
-  const toggleCheckbox = () => {
-    setIsChecked(!isChecked);
-  };
+  useEffect(() => {
+    if (onFocus)
+      inputRef.current.focus();
+  }, []);
 
   return (
-    <TouchableOpacity style={styles.container} onPress={toggleCheckbox}>
-      {withCheck ? <View style={[styles.checkbox, isChecked && styles.checked]} /> : null}
-      <Text style={[styles.label]}>{text}</Text>
-      <RemoveIcon />
-    </TouchableOpacity>
+    <View className="flex-row justify-between space-x-1 items-center">
+      <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
+        {withCheck ? <View className={`h-5 w-5 border-2 border-white rounded-md ${isChecked && 'bg-green-500'} `} /> : null}
+      </TouchableOpacity>
+      <TextInput
+        className="text-white flex-grow"
+        ref={inputRef}
+        maxLength={40}
+        onSubmitEditing={onSubmit}
+        onChange={(value: string) => setTextValue(value)}
+        value={textValue} />
+      <RemoveIcon onPress={() => remove()} />
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: '#ffffff',
-    borderRadius: 3,
-    marginRight: 8,
-  },
-  checked: {
-    backgroundColor: '#70ba50',
-  },
-  label: {
-    color: '#ffffff',
-    fontSize: 16,
-  },
-});

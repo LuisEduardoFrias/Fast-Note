@@ -8,14 +8,8 @@ type TypeScreen = {
 
 export default function Screen({ children, style }: TypeScreen) {
   return (
-    <View style={{
-      flex: 1,
-      backgroundColor: '#242424',
-      paddingVertical: 0,
-      paddingHorizontal: 10,
-      gap: 10,
-      ...style
-    }}>
+    <View className="flex-1 bg-dark-theme px-1"
+      style={{ ...style }}>
       {children}
     </View >
   )
