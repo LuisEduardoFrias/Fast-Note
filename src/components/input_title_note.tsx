@@ -21,7 +21,7 @@ export default function InputTitleNote({ title, noteKey }: { title: string, note
         value={text}
         placeholder="Título"
         placeholderTextColor="white"
-        onChangeText={(event)=>setText(event.nativeEvent.text)}
+        onChangeText={(value)=>setText(value)}
       />
     </View>
   )

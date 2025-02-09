@@ -23,7 +23,7 @@ export default function InputMultilineNote({ text, noteKey, identity }: TypeText
 
   //✅  🟩 ❎ 
   function handleChange(value: string) {
-    let newValue = value.replace(/\$ckd\$/g, '✅'); 
+    let newValue = value.replace(/\$ckd\$/g, '✅');
     newValue = newValue.replace(/\$ck\$/g, '🟩');
     newValue = newValue.replace(/\$xckd\$/g, '❎');
     setTextInput(newValue)

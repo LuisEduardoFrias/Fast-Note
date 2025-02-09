@@ -3,6 +3,7 @@ import { TypeNote, TypeText, TypeImage, TypeList, TypeUid } from '../src/types'
 import CheckBox from '../src/components/checkbox'
 import InputTitleNote from '../src/components/input_title_note'
 import InputMultilineNote from '../src/components/input_multiline_note'
+import ListNote from '../src/components/list_note'
 import ImageNote from '../src/components/image_note'
 import { BackIcon, ImageIcon, TextIcon, ListIcon } from '../src/icons'
 import { useRouter } from 'expo-router'
@@ -21,9 +22,6 @@ export default function Note() {
 
   function handleImgC(key: TypeUid, text: string) {
     addImageToNote(noteKey, { key, text });
-  }
-  function handleListC(key: TypeUid, text: string) {
-    addListToNote(noteKey, { key, text });
   }
 
   return (
@@ -45,17 +43,17 @@ export default function Note() {
                 } else if (obj.uri) {
                   return <ImageNote key={obj.ke} uri={obj.uri} />;
                 } else if (obj.list) {
-                  return <List
-                    key={obj.ke}
+                  return <ListNote
+                    key={obj.key}
+                    identity={obj.key}
                     title={obj.title}
                     withCheck={obj.withCheck}
                     list={obj.list}
-                    onChange={(value) => handleListC(obj.key, value)} />
+                  />
                 }
               })
             }
           </View>
-
 
           <View className="w-full h-10">
           </View>
@@ -72,73 +70,6 @@ export default function Note() {
         <TextIcon color='#3fd2f1' onPress={() => addTextToNote(noteKey)} />
         <ListIcon color='#3fd2f1' onPress={() => addListToNote(noteKey)} />
       </View>
-    </View>
-  )
-}
-
-const styles = StyleSheet.create({
-  list: {
-    gap: 10,
-    marginBottom: 10,
-  },
-
-})
-
-
-type TypeList = {
-  key: number,
-  title?: string,
-  withCheck: boolean,
-  list: TypeListItem[],
-  onChange: (value: string) => void
-}
-
-type TypeListItem = {
-  key: TypeUid,
-  isChecked: boolean,
-  text: string
-}
-
-
-
-function List({ title, list, withCheck, onChange }: TypeList) {
-  const [items, setItems] = useState(list);
-  const defaultValue = { key: '', isChecked: false, text: '' }
-
-  function handleRemove(index: number) {
-    setItems((prev: TypeListItem[]) => {
-      return prev.toSpliced(index, 1);
-    })
-  }
-
-  //{nativeEvent: {text, eventCount, target}}
-  function handleSubmit(value) {
-    console.log("'''''''''''''''''::::::'''''''''''''''''")
-    console.log(value.text)
-    console.log(value.target)
-    console.log(value.eventCount)
-    setItems([...items, defaultValue])
-  }
-
-  return (
-    <View style={styles.list} className="my-2">
-      <TextInput className="font-extrabold text-white" value={title} />
-
-      {items.map((item: TypeListItem, index: number) =>
-        <CheckBox
-          key={index}
-          checked={item.isChecked}
-          withCheck={withCheck}
-          onFocus={((index + 1) === items.length)}
-          text={item.text}
-          onChange={onChange}
-          onSubmit={handleSubmit}
-          remove={() => handleRemove(index)}
-          value={() => { }}
-        />
-      )}
-
-      <AddIcon onPress={() => setItems([...items, defaultValue])} />
     </View>
   )
 }
