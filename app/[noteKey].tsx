@@ -28,7 +28,6 @@ export default function Note() {
     <View className="flex-1 bg-dark-theme">
       <Screen>
         <ScrollView className="relative" >
-          <Text className="text-white">{noteKey}</Text>
           <View className="mx-1">
             {
               data?.map((obj: TypeText | TypeImage | TypeList) => {
@@ -42,13 +41,7 @@ export default function Note() {
                 } else if (obj.uri) {
                   return <ImageNote key={obj.ke} uri={obj.uri} />;
                 } else if (obj.list) {
-                  return <ListNote
-                    key={obj.key}
-                    identity={obj.key}
-                    title={obj.title}
-                    withCheck={obj.withCheck}
-                    list={obj.list}
-                  />
+                  return <ListNote key={obj.key} noteKey={noteKey} data={obj} />
                 }
               })
             }

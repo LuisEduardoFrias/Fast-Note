@@ -23,6 +23,7 @@ type TypeActions = {
   addImageToNote: (key: TypeUid, data?: TypeImage) => void,
   addTextToNote: (key: TypeUid, data?: TypeText) => void,
   addListToNote: (key: TypeUid, data?: TypeList) => void,
+  removeListToNote: (noteKey: TypeUid, listKey: TypeUid) => void,
   removeNote: (key: TypeUid) => void,
   deleteNote: (key: TypeUid) => void,
   updateNote: (note: TypeNote) => void,
@@ -244,9 +245,23 @@ const addListToNote = (key: TypeUid, data?: TypeList) => {
         const indexList = state.notes[index].data.findIndex((obj: TypeList) => obj.key === data.key);
         state.notes[index].data[indexList] = data;
       }
+    }
 
-      return state;
-    })
+    return state;
+  })
+}
+
+const removeListToNote = (noteKey: TypeUid, listKey: TypeUid) => {
+  update((state: TypeState) => {
+    const index = state.notes.findIndex((obj: TypeNote) => obj.key === noteKey);
+
+    if (index !== -1) {
+      const indexList = state.notes[index].data.findIndex((obj: TypeList) => obj.key === listKey);
+      state.notes[index].data.splice(indexList, 1);
+    }
+    console.log(state)
+    return state;
+  })
 }
 
 const removeNote = (key: TypeUid) => {
@@ -345,6 +360,45 @@ createWarehouse({
       ],
       color: "#b8e3bb9a",
       tags: ['biblia', 'pastor'],
+      remove: null,
+      archive: false
+    },
+    {
+      key: uuid.v4(),
+      title: 'Estudio Musica',
+      data: [
+        {
+          key: uuid.v4(),
+          title: 'Acordes',
+          list: [
+            { key: uuid.v4(), isChecked: false, text: 'C - DO' },
+            { key: uuid.v4(), isChecked: false, text: 'C# - DO#' },
+            { key: uuid.v4(), isChecked: false, text: 'D - RE' },
+            { key: uuid.v4(), isChecked: false, text: 'D# - RE#' },
+            { key: uuid.v4(), isChecked: false, text: 'E - MI' },
+            { key: uuid.v4(), isChecked: false, text: 'F - FA' },
+            { key: uuid.v4(), isChecked: false, text: 'F# - FA#' },
+            { key: uuid.v4(), isChecked: false, text: 'G - SOL' },
+            { key: uuid.v4(), isChecked: false, text: 'G# - SOL#' },
+            { key: uuid.v4(), isChecked: false, text: 'A - LA' },
+            { key: uuid.v4(), isChecked: false, text: 'A# - LA#' },
+          ],
+          withCheck: true
+        },
+        {
+          key: uuid.v4(),
+          list: [
+            { key: uuid.v4(), isChecked: false, text: 'C# - DO#' },
+            { key: uuid.v4(), isChecked: false, text: 'D# - RE#' },
+            { key: uuid.v4(), isChecked: false, text: 'G# - SOL#' },
+            { key: uuid.v4(), isChecked: false, text: 'F# - FA#' },
+            { key: uuid.v4(), isChecked: false, text: 'A# - LA#' },
+          ],
+          withCheck: true
+        }
+      ],
+      color: null,
+      tags: ['Musica'],
       remove: null,
       archive: false
     },
@@ -489,6 +543,7 @@ createWarehouse({
   addImageToNote,
   addTextToNote,
   addListToNote,
+  removeListToNote,
   removeNote,
   deleteNote,
   updateNote,

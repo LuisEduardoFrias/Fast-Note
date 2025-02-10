@@ -1,48 +1,40 @@
 
-import { TextInput, View, Alert } from 'react-native'
+import { TextInput, View, Alert, Switch, Pressable } from 'react-native'
 import { useState, useEffect } from 'react'
 import { useActions } from 'subscriber_state'
 import { useDebounce } from '../hooks/useDebounce'
-import { AddIcon } from '../icons'
+import { AddIcon, RemoveIcon } from '../icons'
 import CheckBox from './checkbox'
-import { TypeUid } from '../types'
+import { TypeUid, TypeListItem } from '../types'
 import uuid from 'react-native-uuid';
 
 type TypeList = {
   key: TypeUid,
   noteKey: TypeUid,
-  identity: TypeUid,
-  title?: string,
-  withCheck: boolean,
-  list: TypeListItem[],
-}
-
-type TypeListItem = {
-  key: TypeUid,
-  isChecked: boolean,
-  text: string
+  data: TypeList
 }
 
 const defaultValue = { key: uuid.v4(), isChecked: false, text: '' };
 
-export default function ListNote({ noteKey, title, identity, list, withCheck }: TypeList) {
+export default function ListNote({ data, noteKey }: TypeList) {
+  const { key, title, withCheck: _withCheck, list } = data;
   const [items, setItems] = useState(list);
-  const [inputTitle, setInputTitle] = useState(title);
+  const [withCheck, setWithCheck] = useState(_withCheck);
+  const [inputTitle, setInputTitle] = useState(title ?? "");
+  const { addListToNote, removeListToNote } = useActions();
   const debounce = useDebounce();
-  const { addListToNote } = useActions(['addListToNote']);
 
   useEffect(() => {
-  /*  debounce(() =>
+    debounce(() =>
       addListToNote(noteKey, {
-        key: identity,
+        key,
         title: inputTitle,
         list: items,
         withCheck
-      }));*/
-  }, [inputTitle, items])
+      }));
+  }, [inputTitle, items, withCheck])
 
-
-  function handleSetItems(value: { key: TypeUid, checked: boolean, text: string }) {
+  function handleSetItems(value: TypeListItem) {
     setItems((prev: TypeListItem[]) => {
 
       const index = prev.findIndex((obj: TypeListItem) => obj.key === value.key);
@@ -55,10 +47,10 @@ export default function ListNote({ noteKey, title, identity, list, withCheck }: 
     })
   }
 
-  function handleRemove(key: TypeUid) {
+  function handleRemove(checkboxKey: TypeUid) {
     setItems((prev: TypeListItem[]) => {
 
-      const index = prev.findIndex((obj: TypeListItem) => obj.key === key);
+      const index = prev.findIndex((obj: TypeListItem) => obj.key === checkboxKey);
 
       if (index !== -1) {
         return prev.toSpliced(index, 1);
@@ -68,40 +60,74 @@ export default function ListNote({ noteKey, title, identity, list, withCheck }: 
     })
   }
 
-  function handleSubmit(value) {
+  function handleSubmit() {
     setItems([...items, { ...defaultValue, key: uuid.v4() }])
   }
 
-  return (
-    <View className="space-x-1 my-2">
+  function showAlertActiveCheckBox() {
+    Alert.alert(
+      `¿${!withCheck ? 'Activar' : 'Desactivar'} checkboxes?`,
+      null,
+      [
+        {
+          text: `${!withCheck ? 'Activar' : 'desactivar'}`,
+          onPress: () => setWithCheck(!withCheck),
+        },
+        {
+          text: 'Cancelar',
+        },
+      ],
+      { cancelable: true }
+    )
+  };
 
-      <TextInput
-        className="font-extrabold text-white"
-        value={inputTitle}
-        onChange={(event) => setInputTitle(event.nativeEvent.text)}
-      />
+  function showAlertDeleteList() {
+    Alert.alert(
+      `¿Seguro que decea elimiar la lista?`,
+      null,
+      [
+        {
+          text: 'Okey',
+          onPress: () => removeListToNote(noteKey, key),
+        },
+        {
+          text: 'Cancelar',
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
+  return (
+    <Pressable style={{ backgroundColor: '#ffffff07' }} className="space-x-1 rounded my-2 p-1"
+      onLongPress={showAlertActiveCheckBox} >
+
+      <View style={{ borderColor: '#ffffff07' }} className="flex-row justify-between items-center mb-2 border-b border-dashed">
+        <TextInput
+          className="font-extrabold text-white w-10/12"
+          placeholder="Título"
+          placeholderTextColor="#fff"
+          value={inputTitle}
+          onChangeText={(text) => setInputTitle(text)}
+        />
+        <RemoveIcon onPress={showAlertDeleteList} />
+      </View>
 
       {items.map((item: TypeListItem, index: number) =>
         <CheckBox
           key={item.key}
-          identity={item.key}
-          checked={item.isChecked}
           withCheck={withCheck}
           onFocus={((index + 1) === items.length)}
-          text={item.text}
+          data={item}
           onSubmit={handleSubmit}
-          remove={(key: TypeUid) => handleRemove(key)}
           value={handleSetItems}
+          remove={(checkboxKey: TypeUid) => handleRemove(checkboxKey)}
         />
       )}
 
-      <View className="mt-3 rounded-full w-7 border-2 border-white ">
+      <View className="my-2 rounded-full w-7 border-2 border-white ">
         <AddIcon color="#ffff" onPress={() => setItems([...items, { ...defaultValue, key: uuid.v4() }])} />
       </View>
-    </View>
+    </Pressable>
   )
 }
-
-
-
-

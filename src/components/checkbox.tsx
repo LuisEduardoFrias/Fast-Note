@@ -1,26 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
 import { TouchableOpacity, TextInput, View, StyleSheet } from 'react-native';
 import { RemoveIcon } from '../icons'
-import { TypeUid } from '../types'
+import { TypeUid, TypeListItem } from '../types'
 
 type TypeCheckBox = {
-  identity: TypeUid
-  text: string,
-  checked: boolean,
+  key: TypeUid,
+  data: TypeListItem,
   withCheck: boolean,
   onFocus: boolean,
   remove: (key: TypeUid) => void,
   onSubmit: () => void,
-  value: (value: { key: TypeUid, checked: boolean, text: string }) => void
+  value: (value: TypeListItem) => void
 }
 
-export default function CheckBox({ identity, text, checked, onFocus, onSubmit, value, withCheck, remove }: TypeCheckBox) {
+export default function CheckBox({ data, onFocus, onSubmit, value, withCheck, remove }: TypeCheckBox) {
+  const { key, isChecked: checked, text } = data;
   const [isChecked, setIsChecked] = useState(checked);
-  const [textValue, setTextValue] = useState(text);
+  const [textValue, setTextValue] = useState(text ?? "");
   const inputRef = useRef(null);
 
   useEffect(() => {
-    value({ key: identity, checked: isChecked, text: textValue });
+    value({ key, isChecked, text: textValue });
   }, [isChecked, textValue]);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function CheckBox({ identity, text, checked, onFocus, onSubmit, v
   }, []);
 
   return (
-    <View className="flex-row justify-between border-b border-dashed border-white-100.5 mb-1 pb-1 space-x-1 items-center">
+    <View style={{ borderColor: '#ffffff07' }} className="flex-row justify-between border-b border-dashed mb-1 pb-1 space-x-1 items-center">
       <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
         {withCheck ? <View className={`h-5 w-5 border-2 border-white rounded-md ${isChecked && 'bg-green-500'} `} /> : null}
       </TouchableOpacity>
@@ -38,9 +38,9 @@ export default function CheckBox({ identity, text, checked, onFocus, onSubmit, v
         ref={inputRef}
         maxLength={40}
         onSubmitEditing={onSubmit}
-        onChange={(event) => setTextValue(event.nativeEvent.text)}
+        onChangeText={(valueInput) => setTextValue(valueInput)}
         value={textValue} />
-      <RemoveIcon onPress={() => remove(identity)} />
+      <RemoveIcon color='#857575' onPress={() => remove(key)} />
     </View>
   );
 };
