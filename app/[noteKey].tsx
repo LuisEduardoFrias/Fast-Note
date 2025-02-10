@@ -28,9 +28,8 @@ export default function Note() {
     <View className="flex-1 bg-dark-theme">
       <Screen>
         <ScrollView className="relative" >
-          <InputTitleNote title={title} noteKey={noteKey} />
-
-          <View style={{ margin: 5 }}>
+          <Text className="text-white">{noteKey}</Text>
+          <View className="mx-1">
             {
               data?.map((obj: TypeText | TypeImage | TypeList) => {
                 if (obj.text) {

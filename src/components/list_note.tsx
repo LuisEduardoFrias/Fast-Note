@@ -10,6 +10,7 @@ import uuid from 'react-native-uuid';
 
 type TypeList = {
   key: TypeUid,
+  noteKey: TypeUid,
   identity: TypeUid,
   title?: string,
   withCheck: boolean,
@@ -24,20 +25,20 @@ type TypeListItem = {
 
 const defaultValue = { key: uuid.v4(), isChecked: false, text: '' };
 
-export default function ListNote({ title, identity, list, withCheck }: TypeList) {
+export default function ListNote({ noteKey, title, identity, list, withCheck }: TypeList) {
   const [items, setItems] = useState(list);
   const [inputTitle, setInputTitle] = useState(title);
   const debounce = useDebounce();
-  const { addListToNote } = useActions();
+  const { addListToNote } = useActions(['addListToNote']);
 
   useEffect(() => {
-    //update list with title
-    /*
-    debounce(() =>
-      addListToNote(noteKey, { key: identity, text }));
-      */
-
-    // Alert.alert("items", JSON.stringify(items, null, 2))
+  /*  debounce(() =>
+      addListToNote(noteKey, {
+        key: identity,
+        title: inputTitle,
+        list: items,
+        withCheck
+      }));*/
   }, [inputTitle, items])
 
 

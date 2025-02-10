@@ -29,7 +29,7 @@ export default function CheckBox({ identity, text, checked, onFocus, onSubmit, v
   }, []);
 
   return (
-    <View className="flex-row justify-between space-x-1 items-center">
+    <View className="flex-row justify-between border-b border-dashed border-white-100.5 mb-1 pb-1 space-x-1 items-center">
       <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
         {withCheck ? <View className={`h-5 w-5 border-2 border-white rounded-md ${isChecked && 'bg-green-500'} `} /> : null}
       </TouchableOpacity>

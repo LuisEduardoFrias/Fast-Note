@@ -1,9 +1,7 @@
 import { StyleSheet, Text, View, Button, FlatList } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
 import { useRouter } from 'expo-router'
 
 import { useSubscriberState } from 'subscriber_state'
-import Header from '../src/components/header'
 import AddButton from '../src/components/add_button'
 import Card from '../src/components/card'
 import Screen from '../src/components/screen'
@@ -13,9 +11,7 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <Screen>
-      <StatusBar style="auto" />
-      <Header />
+    <Screen style={{ paddingTop: 5 }}>
       <FlatList
         className="flex mb-3"
         data={notes}

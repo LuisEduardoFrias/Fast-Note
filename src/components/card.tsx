@@ -27,10 +27,9 @@ export default function Card({ data, id }: TypeCard) {
       ${isSelected ? 'border-sky-300' : 'border-white'} 
       ${isSelected ? 'border-3' : 'border-0.5'}`}
       style={{ width: '49%', backgroundColor: data?.color, }}
-      onPress={() => selectIsOn ? selectNote(data.key) : router.push(`/${data.key}`)}
+      onPress={() => selectIsOn ? selectNote(data.key) : router.push(`/${data.key}?title=${data?.title}`)}
       onLongPress={() => selectNote(data.key)}
     >
-
       <View style={{
         borderColor: '#ffffff7f',
         borderBottomWidth: 2,

@@ -237,15 +237,16 @@ const addListToNote = (key: TypeUid, data?: TypeList) => {
   update((state: TypeState) => {
     const index = state.notes.findIndex((obj: TypeNote) => obj.key === key);
 
-    if (!data) {
-      state.notes[index].data.push({ key: uuid.v4(), list: [], withCheck: false })
-    } else {
-      const indexList = state.notes[index].data.findIndex((obj: TypeList) => obj.key === data.key);
-      state.notes[index].data[indexList] = data;
-    }
+    if (index !== -1) {
+      if (!data) {
+        state.notes[index].data.push({ key: uuid.v4(), list: [], withCheck: false })
+      } else {
+        const indexList = state.notes[index].data.findIndex((obj: TypeList) => obj.key === data.key);
+        state.notes[index].data[indexList] = data;
+      }
 
-    return state;
-  })
+      return state;
+    })
 }
 
 const removeNote = (key: TypeUid) => {
@@ -452,8 +453,7 @@ createWarehouse({
     },
     {
       key: 'note 6',
-      title: 'Estudio 6',
-      data: [
+      title: 'Estudio 6', data: [
         { text: "texto nuevo 1 $checked$" },
         { text: "texto nuevo 2 $check$" },
         {
