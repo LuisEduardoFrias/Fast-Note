@@ -6,10 +6,9 @@ import InputMultilineNote from '../src/components/input_multiline_note'
 import ListNote from '../src/components/list_note'
 import ImageNote from '../src/components/image_note'
 import { BackIcon, ImageIcon, TextIcon, ListIcon } from '../src/icons'
-import { useRouter } from 'expo-router'
+import { useRouter, useLocalSearchParams } from 'expo-router'
 import { AddIcon } from '../src/icons/'
 import { useState } from 'react'
-import { useLocalSearchParams } from 'expo-router'
 import Screen from '../src/components/screen'
 import { useSubscriberState } from 'subscriber_state'
 
@@ -27,23 +26,22 @@ export default function Note() {
   return (
     <View className="flex-1 bg-dark-theme">
       <Screen>
-        <ScrollView className="relative" >
+        <ScrollView className="relative" key={noteKey} >
           <View className="mx-1">
             {
-              data?.map((obj: TypeText | TypeImage | TypeList) => {
-                if (obj.text) {
-                  return <InputMultilineNote
-                    key={obj.key}
-                    noteKey={noteKey}
-                    identity={obj.ke}
-                    text={obj.text}
-                  />
-                } else if (obj.uri) {
-                  return <ImageNote key={obj.ke} uri={obj.uri} />;
-                } else if (obj.list) {
-                  return <ListNote key={obj.key} noteKey={noteKey} data={obj} />
-                }
-              })
+              data?.map((obj: TypeText | TypeImage | TypeList) =>
+                <View key={obj.key}>
+                  {
+                    (obj.text) ?
+                      <InputMultilineNote key={obj.key} noteKey={noteKey} data={obj} />
+                      : (obj.uri) ?
+                        <ImageNote key={obj.key} noteKey={noteKey} data={obj} />
+                        : (obj.list) ?
+                          <ListNote key={obj.key} noteKey={noteKey} data={obj} />
+                          : null
+                  }
+                </View>
+              )
             }
           </View>
 

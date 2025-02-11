@@ -3,22 +3,21 @@ import { TextInput } from "react-native"
 import { useState, useEffect } from 'react'
 import { useDebounce } from '../hooks/useDebounce'
 import { useActions } from 'subscriber_state'
+import { TypeText } from '../types'
 
 type TypeText = {
-  key: number,
-  text: string,
   noteKey: string,
-  identity: string,
+  data: TypeText,
 }
 
-export default function InputMultilineNote({ text, noteKey, identity }: TypeText) {
+export default function InputMultilineNote({ noteKey, data }: TypeText) {
   const { addTextToNote } = useActions();
-  const [textInput, setTextInput] = useState(text)
+  const [textInput, setTextInput] = useState(data.text)
   const debounce = useDebounce();
 
   useEffect(() => {
     debounce(() =>
-      addTextToNote(noteKey, { key: identity, text: textInput }));
+      addTextToNote(noteKey, { key: data.key, text: textInput }));
   }, [textInput])
 
   //✅  🟩 ❎ 
@@ -32,9 +31,11 @@ export default function InputMultilineNote({ text, noteKey, identity }: TypeText
   return (
     <TextInput
       multiline
+      placeholder="Text"
+      placeholderTextColor="#c4c4c4ce"
       className="text-white p-0"
       value={textInput}
-      onChange={(event) => handleChange(event.nativeEvent.text)}
+      onChangeText={handleChange}
     />
   )
 }

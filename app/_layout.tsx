@@ -25,6 +25,13 @@ export default function Layout() {
               <InputTitleNote title={route.params.title} noteKey={route.params.noteKey} />
             </View>
         }} />
+        <Stack.Screen name="camera" options={{
+          title: 'camera',
+          header: ()=>null
+        }} />
+        <Stack.Screen name="galery" options={{
+          title: 'galery',
+        }} />
       </Stack>
     </View>
   )

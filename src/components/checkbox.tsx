@@ -4,7 +4,6 @@ import { RemoveIcon } from '../icons'
 import { TypeUid, TypeListItem } from '../types'
 
 type TypeCheckBox = {
-  key: TypeUid,
   data: TypeListItem,
   withCheck: boolean,
   onFocus: boolean,
@@ -37,6 +36,8 @@ export default function CheckBox({ data, onFocus, onSubmit, value, withCheck, re
         className="text-white flex-grow h-5 p-0"
         ref={inputRef}
         maxLength={40}
+        placeholder="Opcion"
+        placeholderTextColor="#c4c4c4ce"
         onSubmitEditing={onSubmit}
         onChangeText={(valueInput) => setTextValue(valueInput)}
         value={textValue} />

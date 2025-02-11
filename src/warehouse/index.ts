@@ -27,6 +27,7 @@ type TypeActions = {
   removeNote: (key: TypeUid) => void,
   deleteNote: (key: TypeUid) => void,
   updateNote: (note: TypeNote) => void,
+  updateImage: (notekey: TypeNote, imageKey: TypeUid, uri: string) => void,
   addNoteInEdition: (note?: TypeNote) => void,
   removeNoteInEdition: () => void,
   search: (value: string) => void,
@@ -209,7 +210,11 @@ const addImageToNote = (key: TypeUid, data?: TypeImage) => {
     const index = state.notes.findIndex((obj: TypeNote) => obj.key === key);
 
     if (!data) {
-      state.notes[index].data.push({ key: uuid.v4(), uri: '', size: { w: 50, h: 50 } })
+      state.notes[index].data.push({
+        key: uuid.v4(),
+        uri: "../assets/hide_image.png",
+        size: null
+      })
     } else {
       const indexImg = state.notes[index].data.findIndex((obj: TypeImage) => obj.key === data.key);
       state.notes[index].data[indexImg] = data;
@@ -224,7 +229,7 @@ const addTextToNote = (key: TypeUid, data?: TypeText) => {
     const index = state.notes.findIndex((obj: TypeNote) => obj.key === key);
 
     if (!data) {
-      state.notes[index].data.push({ key: uuid.v4(), text: '' })
+      state.notes[index].data.push({ key: uuid.v4(), text: ' ' })
     } else {
       const indexText = state.notes[index].data.findIndex((obj: TypeText) => obj.key === data.key);
       state.notes[index].data[indexText] = data;
@@ -292,6 +297,25 @@ const updateNote = (note: TypeNote) => {
   update((state: TypeState) => {
     const index = state.notes.findIndex((_note_: typeNote) => _note_.key === note.key);
     state.notes[index] = { ...state.notes[index], ...note };
+    return state;
+  })
+};
+
+const updateImage = (notekey: TypeNote, imageKey: TypeUid, uri: string) => {
+  update((state: TypeState) => {
+    const noteIndex = state.notes.findIndex((_note_: typeNote) => _note_.key === notekey);
+    if (noteIndex !== -1) {
+      const imgIndex = state.notes[noteIndex].data.findIndex((img: TypeImage) => img.key === imageKey);
+
+      if (imgIndex !== -1) {
+        state.notes[noteIndex].data[imgIndex].uri = uri;
+      } else {
+        console.log("The image '", imageKey, "' don't exists")
+      }
+    } else {
+      console.log("The note '", notekey, "' don't exists")
+    }
+
     return state;
   })
 };
@@ -547,6 +571,7 @@ createWarehouse({
   removeNote,
   deleteNote,
   updateNote,
+  updateImage,
   addNoteInEdition,
   removeNoteInEdition,
   search

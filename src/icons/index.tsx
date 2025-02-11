@@ -19,6 +19,21 @@ type TypeIcon = {
 export const AddIcon = (props: TypeIcon) =>
   (<Ionicons name="add" size={24} color="black" {...props} />)
 
+export const FlashIcon = (props: TypeIcon) =>
+  (<Ionicons name="flash" size={24} color="black" {...props} />)
+
+export const GaleryIcons = (props: TypeIcon) =>
+  (<Ionicons name="images" size={24} color="black" {...props} />)
+
+export const CameraReverseIcon = (props: TypeIcon) =>
+  (<Ionicons name="camera-reverse-sharp" size={24} color="black" {...props} />)
+
+export const RepeatIcon = (props: TypeIcon) =>
+  (<Ionicons name="repeat" size={24} color="black" {...props} />)
+
+export const CheckIcon = (props: TypeIcon) =>
+  (<Ionicons name="checkmark-circle" size={24} color="black" {...props} />)
+
 export const BackIcon = (props: TypeIcon) =>
   (<Ionicons name="arrow-back" size={24} color="#ffffff" {...props} />);
 

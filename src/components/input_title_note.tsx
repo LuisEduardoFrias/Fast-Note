@@ -20,7 +20,7 @@ export default function InputTitleNote({ title, noteKey }: { title: string, note
         className="text-white font-extrabold text-2xl"
         value={text}
         placeholder="Título"
-        placeholderTextColor="white"
+        placeholderTextColor="#c4c4c4ce"
         onChangeText={(value)=>setText(value)}
       />
     </View>

@@ -1,73 +1,73 @@
-import { Image, Text, View, Pressable, StyleSheet, StatusBar, Animated, Dimensions } from 'react-native'
-/*import { useState } from 'react'
+import { Image, View, Pressable, Text, Dimensions } from 'react-native'
+import { useState, useEffect, useRef } from 'react'
+import Slider from '@react-native-community/slider'
 import { DeleteIcon } from '../icons'
+import { TypeUid, TypeImage as TypeImage_ } from '../types'
+import { useRouter } from 'expo-router'
 
 type TypeImage = {
-  uri: string
-  onDelete: () => void;
-}
+  noteKey: TypeUid,
+  data: TypeImage_,
+};
 
-export default function ImageNote({ uri, onDelete }: TypeImage) {
-  const scale = new Animated.Value(1);
-  const [size, setSize] = useState({ width: 60, height: 6 })
+export default function ImageNote({ noteKey, data }: TypeImage) {
+  const router = useRouter();
+  const { uri, key: imageKey, size: size_ } = data;
 
-  const handlePressIn = () => {
-    Animated.timing(scale, {
-      toValue: 1.2,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  };
+  const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
+  const [size, setSize] = useState(size_ ?? (screenWidth / 4));
+  const timer = useRef(null);
+  const [showControl, setShowControl] = useState(false);
 
-  const handlePressOut = () => {
-    Animated.timing(scale, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', () => {
+      setScreenWidth(Dimensions.get('window').width);
+    });
+    return () => subscription?.remove();
+  }, []);
+
+  useEffect(() => {
+    if (showControl) {
+      clearTimeout(timer.current);
+
+      timer.current = setTimeout(() => {
+        setShowControl(false)
+      }, 2000);
+    }
+  }, [showControl, size]);
+
+  const onDelete = () => {
+    // Implement delete logic here
+    console.log("Delete image");
   };
 
   return (
-    <Pressable style={{ width: '100%', borderWidth: 1, borderColor: 'red' }} onPressIn={handlePressIn} onPressOut={handlePressOut} onPress={onDelete}>
-      <Animated.Image source={{ uri }} style={[styles.image(size), { transform: [{ scale }] }]} />
+    <Pressable className="bg-transluxed rounded p-2 pb-4 my-2 justify-center items-center"
+      onLongPress={() => setShowControl(true)}
+      onPress={() => router.push(`/camera?noteKey=${noteKey}&imageKey=${imageKey}`)}
+    >
+      {
+        showControl &&
+        <View className="flex-row justify-between items-center">
+          <View className="w-11/12">
+            <Slider
+              minimumValue={screenWidth / 4}
+              maximumValue={screenWidth - 50}
 
-      <View style={{
-        width: '100%',
-        height: 30,
-        borderWidth: 1, borderColor: 'blue',
-        opacity: parseInt(scale.interpolate({ inputRange: [1, 1.2], outputRange: [0, 1] }))
-      }}>
+              minimumTrackTintColor="#FFFFFF"
+              maximumTrackTintColor="#000000"
+              onValueChange={(value) => setSize(value)}
+            />
+          </View>
 
-        <Slider
-          style={{ width: '100%', height: 10 }}
-          minimumValue={0}
-          maximumValue={100}
-          minimumTrackTintColor="#FFFFFF"
-          maximumTrackTintColor="#000000"
-          onValueChange={(value) => setSize({ width: value, height: value })}
-        />
+          <DeleteIcon onPress={onDelete} />
 
-        <Pressable onPress={onDelete}>
-          <DeleteIcon />
-        </Pressable>
-      </View>
+        </View>
+      }
+      {!uri ?
+        <Image style={{ width: size, height: size }} source={{ uri: '../assets/hide_image.png' }} /> :
+        <Image style={{ width: size, height: size }} source={{ uri }} />
+      }
     </Pressable>
-  );
-}
-
-const styles = StyleSheet.create({
-  image: (size) => ({
-    width: `${size.width}%`,
-    height: `${200}`,
-    marginBottom: 5
-  }),
-})*/
-
-export default function ImageNote({ uri, onDelete }: TypeImage) {
-
-  return (
-    <View>
-<Text>Welcome to React Native!</Text>
-      </View>
   );
 }

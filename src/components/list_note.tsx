@@ -9,7 +9,6 @@ import { TypeUid, TypeListItem } from '../types'
 import uuid from 'react-native-uuid';
 
 type TypeList = {
-  key: TypeUid,
   noteKey: TypeUid,
   data: TypeList
 }
@@ -106,7 +105,7 @@ export default function ListNote({ data, noteKey }: TypeList) {
         <TextInput
           className="font-extrabold text-white w-10/12"
           placeholder="Título"
-          placeholderTextColor="#fff"
+          placeholderTextColor="#c4c4c4ce"
           value={inputTitle}
           onChangeText={(text) => setInputTitle(text)}
         />
