@@ -27,10 +27,11 @@ export default function Layout() {
         }} />
         <Stack.Screen name="camera" options={{
           title: 'camera',
-          header: ()=>null
+          header: () => null
         }} />
-        <Stack.Screen name="galery" options={{
-          title: 'galery',
+        <Stack.Screen name="gallery" options={{
+          title: 'gallery',
+          header: () => null
         }} />
       </Stack>
     </View>

@@ -1,6 +1,6 @@
 import { createWarehouse, update } from 'subscriber_state'
 import { TypeNote, TypeUid, TypeImage, TypeText, TypeList } from '../types'
-import { getNotes, removeNote as removeNoteKeep, deleteNote as deleteNoteKeep } from '../services/keep'
+import { getNotes, postNote } from '../services/keep'
 import uuid from 'react-native-uuid';
 
 type TypeState = {
@@ -26,10 +26,12 @@ type TypeActions = {
   removeListToNote: (noteKey: TypeUid, listKey: TypeUid) => void,
   removeNote: (key: TypeUid) => void,
   deleteNote: (key: TypeUid) => void,
+  deleteImageToNote: (noteKey: TypeUid, imageKey: TypeUid) => void,
   updateNote: (note: TypeNote) => void,
   updateImage: (notekey: TypeNote, imageKey: TypeUid, uri: string) => void,
   addNoteInEdition: (note?: TypeNote) => void,
   removeNoteInEdition: () => void,
+  removeTextToNote: (notekey: TypeNote, textKey: TypeUid) => void,
   search: (value: string) => void,
 }
 
@@ -69,6 +71,8 @@ const addTag = (key: TypeUid, tag: string) => {
       throw error;
     }
 
+    postNote(state.notes);
+
     return state;
   })
 };
@@ -87,6 +91,7 @@ const archive = (key: TypeUid) => {
       throw error;
     }
 
+    postNote(state.notes);
     return state;
   })
 };
@@ -107,6 +112,7 @@ const addColor = (key: TypeUid, color: string) => {
       throw error;
     }
 
+    postNote(state.notes);
     return state;
   })
 };
@@ -128,6 +134,7 @@ const addTagOfSelect = (tag: string) => {
     })
 
     state.selectedNotes = [];
+    postNote(state.notes);
     return state;
   })
 };
@@ -145,6 +152,7 @@ const archiveOfSelect = () => {
     })
 
     state.selectedNotes = [];
+    postNote(state.notes);
     return state;
   })
 };
@@ -164,6 +172,7 @@ const addColorOfSelect = (color: string) => {
     });
 
     state.selectedNotes = [];
+    postNote(state.notes);
     return state;
   })
 };
@@ -173,7 +182,7 @@ const removeNoteOfSelect = () => {
     state.selectedNotes.forEach((uid: TypeUid) => {
       const datetime = new Date;
 
-      removeNoteKeep(uid, datetime);
+      // removeNoteKeep(uid, datetime);
 
       const index = state.notes.findIndex(obj => obj.key === uid);
 
@@ -183,6 +192,7 @@ const removeNoteOfSelect = () => {
     });
 
     state.selectedNotes = [];
+    postNote(state.notes);
     return state;
   })
 }
@@ -200,6 +210,8 @@ const addNote = () => {
       remove: null,
       archive: false
     });
+
+    // postNote(state.notes);
     return state;
   })
   return key;
@@ -212,14 +224,16 @@ const addImageToNote = (key: TypeUid, data?: TypeImage) => {
     if (!data) {
       state.notes[index].data.push({
         key: uuid.v4(),
-        uri: "../assets/hide_image.png",
+        uri: null,
         size: null
       })
+      console.log(state.notes[index].data)
     } else {
       const indexImg = state.notes[index].data.findIndex((obj: TypeImage) => obj.key === data.key);
       state.notes[index].data[indexImg] = data;
     }
 
+    postNote(state.notes);
     return state;
   })
 }
@@ -229,12 +243,13 @@ const addTextToNote = (key: TypeUid, data?: TypeText) => {
     const index = state.notes.findIndex((obj: TypeNote) => obj.key === key);
 
     if (!data) {
-      state.notes[index].data.push({ key: uuid.v4(), text: ' ' })
+      state.notes[index].data.push({ key: uuid.v4(), text: null })
     } else {
       const indexText = state.notes[index].data.findIndex((obj: TypeText) => obj.key === data.key);
       state.notes[index].data[indexText] = data;
     }
 
+    postNote(state.notes);
     return state;
   })
 }
@@ -252,6 +267,7 @@ const addListToNote = (key: TypeUid, data?: TypeList) => {
       }
     }
 
+    postNote(state.notes);
     return state;
   })
 }
@@ -264,44 +280,58 @@ const removeListToNote = (noteKey: TypeUid, listKey: TypeUid) => {
       const indexList = state.notes[index].data.findIndex((obj: TypeList) => obj.key === listKey);
       state.notes[index].data.splice(indexList, 1);
     }
-    console.log(state)
+
+    postNote(state.notes);
     return state;
   })
 }
 
 const removeNote = (key: TypeUid) => {
   (async () => {
-    const datetime = await removeNoteKeep(key);
+    const datetime = new data();// await removeNoteKeep(key);
 
     update((state: TypeState) => {
       const index = state.notes.findIndex((note: typeNote) => note.key === key);
       state.notes[index].remove = datetime;
+
+      postNote(state.notes);
       return state;
     })
   })()
 };
 
 const deleteNote = (key: TypeUid) => {
-  (async () => {
-    await deleteNoteKeep(key);
+  update((state: TypeState) => {
+    const index = state.notes.findIndex((note: typeNote) => note.key === key);
+    state.notes.splice(index, 1);
 
-    update((state: TypeState) => {
-      const index = state.notes.findIndex((note: typeNote) => note.key === key);
-      state.notes.splice(index, 1);
-      return state;
-    })
-  })()
+    postNote(state.notes);
+    return state;
+  })
+};
+
+const deleteImageToNote = (noteKey: TypeUid, imageKey: TypeUid) => {
+  update((state: TypeState) => {
+    const index = state.notes.findIndex((note: typeNote) => note.key === noteKey);
+    const indexImage = state.notes[index].data.findIndex((obj: TypeImage | TypeList | TypeText) => obj.key === imageKey);
+    state.notes[index].data.splice(indexImage, 1);
+
+    postNote(state.notes);
+    return state;
+  })
 };
 
 const updateNote = (note: TypeNote) => {
   update((state: TypeState) => {
     const index = state.notes.findIndex((_note_: typeNote) => _note_.key === note.key);
     state.notes[index] = { ...state.notes[index], ...note };
+
+    postNote(state.notes);
     return state;
   })
 };
 
-const updateImage = (notekey: TypeNote, imageKey: TypeUid, uri: string) => {
+const updateImage = (notekey: TypeNote, imageKey: TypeUid, { uri, size }: TypeImage) => {
   update((state: TypeState) => {
     const noteIndex = state.notes.findIndex((_note_: typeNote) => _note_.key === notekey);
     if (noteIndex !== -1) {
@@ -309,6 +339,7 @@ const updateImage = (notekey: TypeNote, imageKey: TypeUid, uri: string) => {
 
       if (imgIndex !== -1) {
         state.notes[noteIndex].data[imgIndex].uri = uri;
+        if (size) state.notes[noteIndex].data[imgIndex].size = size;
       } else {
         console.log("The image '", imageKey, "' don't exists")
       }
@@ -316,6 +347,7 @@ const updateImage = (notekey: TypeNote, imageKey: TypeUid, uri: string) => {
       console.log("The note '", notekey, "' don't exists")
     }
 
+    postNote(state.notes);
     return state;
   })
 };
@@ -334,10 +366,21 @@ const removeNoteInEdition = () => {
   })
 };
 
+const removeTextToNote = (notekey: TypeNote, textKey: TypeUid) => {
+  update((state: TypeState) => {
+    const noteIndex = state.notes.findIndex((obj: TypeNote) => obj.key === notekey);
+    const textIndex = state.notes[noteIndex].data.findIndex((obj: TypeList | TypeText | TypeImage) => obj.key === textKey);
+    state.notes[noteIndex].data.splice(textIndex, 1);
+
+    postNote(state.notes)
+    return state;
+  })
+};
+
 const search = (value: string) => {
   update((state: TypeState) => {
 
-    state.filtered = state.notes.filter((note: TypeNote) => {
+    state.filtered = state?.notes?.filter((note: TypeNote) => {
       return note.title.toLowerCase().includes(value.toLowerCase()) ||
         note.dsta.toLowerCase().includes(value.toLowerCase());
     });
@@ -348,231 +391,263 @@ const search = (value: string) => {
 
 /////////////////////////////
 
-// (async () => {
-//   //feching para octener las notas de lss nuves
-//   const notes = await getNotes();
-// })()
+(async () => {
+  //feching para octener las notas de lss nuves
+  const notes = await getNotes() ?? [];
 
-createWarehouse({
-  notes: [
-    {
-      key: 'note 1',
-      title: 'Estudio 1',
-      data: [
-        { key: '9th', text: "texto nuevo 1 $checked$" },
-        { key: '2ei', text: "texto nuevo 2 $check$" },
-        {
-          key: '5thi8',
-          list: [
-            { key: '3f8h', isChecked: false, text: 'Estilo 1' },
-            { key: '2r0y', isChecked: false, text: 'Estilo 2' },
-            { key: 'uo9', isChecked: false, text: 'Estilo 3' },
-          ],
-          withCheck: false
-        },
-        { key: 'lo9', text: "texto nuevo 3" },
-        {
-          key: 'j8lf',
-          list: [
-            { key: 'y27k', isChecked: false, text: 'leer' },
-            { key: 'jwlp', isChecked: true, text: 'limpiar' },
-            { key: '7wh7kb', isChecked: true, text: 'orar' },
-            { key: '62blz', isChecked: true, text: 'escuchar musica' },
-          ],
-          withCheck: true
-        },
-      ],
-      color: "#b8e3bb9a",
-      tags: ['biblia', 'pastor'],
-      remove: null,
-      archive: false
-    },
-    {
-      key: uuid.v4(),
-      title: 'Estudio Musica',
-      data: [
-        {
-          key: uuid.v4(),
-          title: 'Acordes',
-          list: [
-            { key: uuid.v4(), isChecked: false, text: 'C - DO' },
-            { key: uuid.v4(), isChecked: false, text: 'C# - DO#' },
-            { key: uuid.v4(), isChecked: false, text: 'D - RE' },
-            { key: uuid.v4(), isChecked: false, text: 'D# - RE#' },
-            { key: uuid.v4(), isChecked: false, text: 'E - MI' },
-            { key: uuid.v4(), isChecked: false, text: 'F - FA' },
-            { key: uuid.v4(), isChecked: false, text: 'F# - FA#' },
-            { key: uuid.v4(), isChecked: false, text: 'G - SOL' },
-            { key: uuid.v4(), isChecked: false, text: 'G# - SOL#' },
-            { key: uuid.v4(), isChecked: false, text: 'A - LA' },
-            { key: uuid.v4(), isChecked: false, text: 'A# - LA#' },
-          ],
-          withCheck: true
-        },
-        {
-          key: uuid.v4(),
-          list: [
-            { key: uuid.v4(), isChecked: false, text: 'C# - DO#' },
-            { key: uuid.v4(), isChecked: false, text: 'D# - RE#' },
-            { key: uuid.v4(), isChecked: false, text: 'G# - SOL#' },
-            { key: uuid.v4(), isChecked: false, text: 'F# - FA#' },
-            { key: uuid.v4(), isChecked: false, text: 'A# - LA#' },
-          ],
-          withCheck: true
-        }
-      ],
-      color: null,
-      tags: ['Musica'],
-      remove: null,
-      archive: false
-    },
-    {
-      key: 'note 2',
-      title: 'Estudio 2',
-      data: [
-        { key: 'zuwil', text: "texto nuevo 1 $checked$	&#x2705" },
-        { key: 'hd7zu', text: "otro ejemplo $check$ &#x274e; " },
-        { key: 'wjd', text: "release the Alt key and you get a ✅ Heavy White 🟩 heck Mark." },
-        { key: 'dywz', text: "To write the Negative Squared Cross Mark symbol ❎ on keyboard using ALT codes; ALT+10062, just hold down the ALT key while typing the alt key code 10062. You have to use the numeric keypad of your keyboard. If you don not have numeric keypad, hold down the Fn and ALT keys while typing the alt code number." },
-        {
-          key: 'hd8e',
-          title: 'sin titulo',
-          list: [
-            { key: '123', isChecked: false, text: 'Estilo 1' },
-            { key: '628', isChecked: false, text: 'Estilo 2' },
-            { key: 'p7e', isChecked: false, text: 'Estilo 3' },
-          ],
-          withCheck: false
-        },
-        { key: '626x6ik', text: "mas texto 3" },
-        { key: 'jdile', text: "jajaj haybque ver" },
-        { key: 'hr6', text: "mas escrituras" },
-        {
-          title: 'sin titulo',
-          key: 'j26i',
-          list: [
-            { key: 'o29zk', isChecked: false, text: 'otros 1' },
-            { key: 'id8o2n', isChecked: true, text: 'otros 2' },
-          ],
-          withCheck: true
-        },
-        { key: 'jeild', text: "ultimo " },
-      ],
-      color: null,
-      tags: ['musica'],
-      remove: null,
-      archive: false
-    },
-    {
-      key: 'note 3',
-      title: 'Estudio 3',
-      data: [
-        { text: "texto nuevo 1 $checked$" },
-        { text: "texto nuevo 2 $check$" },
-        {
-          list: [
-            { isChecked: false, text: 'Estilo 1' },
-            { isChecked: false, text: 'Estilo 3' },
-          ],
-          withCheck: false
-        },
-        { text: "texto nuevo 3" },
-        { text: "texto nuevo 4" },
-        { text: "texto nuevo 5" },
-      ],
-      color: "#b8e1e39a",
-      tags: ['otros', 'nuevo'],
-      remove: null,
-      archive: true
-    },
-    {
-      key: 'note 4',
-      title: 'Estudio 4',
-      data: [
-        { text: "texto nuevo 1 $checked$" },
-        { text: "texto nuevo 2 $check$" },
-        {
-          list: [
-            { isChecked: false, text: 'Estilo 1' },
-            { isChecked: false, text: 'Estilo 3' },
-          ],
-          withCheck: false
-        },
-        { text: "texto nuevo 3" },
-        { text: "texto nuevo 4" },
-        { text: "texto nuevo 5" },
-      ],
-      color: null,
-      tags: ['otros 2', 'nuevo 2'],
-      remove: new Date(),
-      archive: false
-    },
-    {
-      key: 'note 5',
-      title: 'Estudio 5',
-      data: [
-        { text: "texto nuevo 1 $checked$" },
-        { text: "texto nuevo 2 $check$" },
-        {
-          list: [
-            { isChecked: false, text: 'Estilo 1' },
-            { isChecked: false, text: 'Estilo 3' },
-          ],
-          withCheck: false
-        },
-        { text: "texto nuevo 3" },
-        { text: "texto nuevo 4" },
-        { text: "texto nuevo 5" },
-      ],
-      color: "#e3b8b89a",
-      tags: ['otros 9'],
-      remove: null,
-      archive: false
-    },
-    {
-      key: 'note 6',
-      title: 'Estudio 6', data: [
-        { text: "texto nuevo 1 $checked$" },
-        { text: "texto nuevo 2 $check$" },
-        {
-          list: [
-            { isChecked: false, text: 'Estilo 1' },
-            { isChecked: false, text: 'Estilo 3' },
-          ],
-          withCheck: false
-        },
-        { text: "texto nuevo 3" },
-        { text: "texto nuevo 4" },
-        { text: "texto nuevo 5" },
-      ],
-      color: null,
-      tags: ['estilos'],
-      remove: null,
-      archive: false
-    },
-  ],
-  selectedNotes: [],
-  noteInEdition: null,
+  createWarehouse({
+    notes: notes,
+    selectedNotes: [],
+    noteInEdition: null,
 
-  selectNote,
-  clearSelectedNotes,
-  addTag,
-  archive,
-  addColor,
-  addTagOfSelect,
-  archiveOfSelect,
-  addColorOfSelect,
-  removeNoteOfSelect,
-  addNote,
-  addImageToNote,
-  addTextToNote,
-  addListToNote,
-  removeListToNote,
-  removeNote,
-  deleteNote,
-  updateNote,
-  updateImage,
-  addNoteInEdition,
-  removeNoteInEdition,
-  search
-})
+    selectNote,
+    clearSelectedNotes,
+    addTag,
+    archive,
+    addColor,
+    addTagOfSelect,
+    archiveOfSelect,
+    addColorOfSelect,
+    removeNoteOfSelect,
+    addNote,
+    addImageToNote,
+    addTextToNote,
+    addListToNote,
+    removeListToNote,
+    removeNote,
+    deleteNote,
+    deleteImageToNote,
+    updateNote,
+    updateImage,
+    addNoteInEdition,
+    removeNoteInEdition,
+    removeTextToNote,
+    search
+  });
+
+})()
+
+
+/*
+[
+      {
+        key: uuid.v4(),
+        title: 'Estudio 1',
+        data: [
+          { key: uuid.v4(), uri: null, size: null },
+          { key: uuid.v4(), uri: null, size: null },
+        ],
+        color: null,
+        tags: ['biblia'],
+        remove: null,
+        archive: false
+      },
+      {
+        key: uuid.v4(),
+        title: 'Estudio 2',
+        data: [
+          { key: uuid.v4(), uri: null, size: null },
+        ],
+        color: "#b8e3bb9a",
+        tags: [],
+        remove: null,
+        archive: false
+      },
+      /* {
+         key: 'note 1',
+         title: 'Estudio 1',
+         data: [
+           { key: '9th', text: "texto nuevo 1 $checked$" },
+           { key: '2ei', text: "texto nuevo 2 $check$" },
+           {
+             key: '5thi8',
+             list: [
+               { key: '3f8h', isChecked: false, text: 'Estilo 1' },
+               { key: '2r0y', isChecked: false, text: 'Estilo 2' },
+               { key: 'uo9', isChecked: false, text: 'Estilo 3' },
+             ],
+             withCheck: false
+           },
+           { key: 'lo9', text: "texto nuevo 3" },
+           {
+             key: 'j8lf',
+             list: [
+               { key: 'y27k', isChecked: false, text: 'leer' },
+               { key: 'jwlp', isChecked: true, text: 'limpiar' },
+               { key: '7wh7kb', isChecked: true, text: 'orar' },
+               { key: '62blz', isChecked: true, text: 'escuchar musica' },
+             ],
+             withCheck: true
+           },
+         ],
+         color: "#b8e3bb9a",
+         tags: ['biblia', 'pastor'],
+         remove: null,
+         archive: false
+       },
+       {
+         key: uuid.v4(),
+         title: 'Estudio Musica',
+         data: [
+           {
+             key: uuid.v4(),
+             title: 'Acordes',
+             list: [
+               { key: uuid.v4(), isChecked: false, text: 'C - DO' },
+               { key: uuid.v4(), isChecked: false, text: 'C# - DO#' },
+               { key: uuid.v4(), isChecked: false, text: 'D - RE' },
+               { key: uuid.v4(), isChecked: false, text: 'D# - RE#' },
+               { key: uuid.v4(), isChecked: false, text: 'E - MI' },
+               { key: uuid.v4(), isChecked: false, text: 'F - FA' },
+               { key: uuid.v4(), isChecked: false, text: 'F# - FA#' },
+               { key: uuid.v4(), isChecked: false, text: 'G - SOL' },
+               { key: uuid.v4(), isChecked: false, text: 'G# - SOL#' },
+               { key: uuid.v4(), isChecked: false, text: 'A - LA' },
+               { key: uuid.v4(), isChecked: false, text: 'A# - LA#' },
+             ],
+             withCheck: true
+           },
+           {
+             key: uuid.v4(),
+             list: [
+               { key: uuid.v4(), isChecked: false, text: 'C# - DO#' },
+               { key: uuid.v4(), isChecked: false, text: 'D# - RE#' },
+               { key: uuid.v4(), isChecked: false, text: 'G# - SOL#' },
+               { key: uuid.v4(), isChecked: false, text: 'F# - FA#' },
+               { key: uuid.v4(), isChecked: false, text: 'A# - LA#' },
+             ],
+             withCheck: true
+           }
+         ],
+         color: null,
+         tags: ['Musica'],
+         remove: null,
+         archive: false
+       },
+       {
+         key: 'note 2',
+         title: 'Estudio 2',
+         data: [
+           { key: 'zuwil', text: "texto nuevo 1 $checked$	&#x2705" },
+           { key: 'hd7zu', text: "otro ejemplo $check$ &#x274e; " },
+           { key: 'wjd', text: "release the Alt key and you get a ✅ Heavy White 🟩 heck Mark." },
+           { key: 'dywz', text: "To write the Negative Squared Cross Mark symbol ❎ on keyboard using ALT codes; ALT+10062, just hold down the ALT key while typing the alt key code 10062. You have to use the numeric keypad of your keyboard. If you don not have numeric keypad, hold down the Fn and ALT keys while typing the alt code number." },
+           {
+             key: 'hd8e',
+             title: 'sin titulo',
+             list: [
+               { key: '123', isChecked: false, text: 'Estilo 1' },
+               { key: '628', isChecked: false, text: 'Estilo 2' },
+               { key: 'p7e', isChecked: false, text: 'Estilo 3' },
+             ],
+             withCheck: false
+           },
+           { key: '626x6ik', text: "mas texto 3" },
+           { key: 'jdile', text: "jajaj haybque ver" },
+           { key: 'hr6', text: "mas escrituras" },
+           {
+             title: 'sin titulo',
+             key: 'j26i',
+             list: [
+               { key: 'o29zk', isChecked: false, text: 'otros 1' },
+               { key: 'id8o2n', isChecked: true, text: 'otros 2' },
+             ],
+             withCheck: true
+           },
+           { key: 'jeild', text: "ultimo " },
+         ],
+         color: null,
+         tags: ['musica'],
+         remove: null,
+         archive: false
+       },
+       {
+         key: 'note 3',
+         title: 'Estudio 3',
+         data: [
+           { text: "texto nuevo 1 $checked$" },
+           { text: "texto nuevo 2 $check$" },
+           {
+             list: [
+               { isChecked: false, text: 'Estilo 1' },
+               { isChecked: false, text: 'Estilo 3' },
+             ],
+             withCheck: false
+           },
+           { text: "texto nuevo 3" },
+           { text: "texto nuevo 4" },
+           { text: "texto nuevo 5" },
+         ],
+         color: "#b8e1e39a",
+         tags: ['otros', 'nuevo'],
+         remove: null,
+         archive: true
+       },
+       {
+         key: 'note 4',
+         title: 'Estudio 4',
+         data: [
+           { text: "texto nuevo 1 $checked$" },
+           { text: "texto nuevo 2 $check$" },
+           {
+             list: [
+               { isChecked: false, text: 'Estilo 1' },
+               { isChecked: false, text: 'Estilo 3' },
+             ],
+             withCheck: false
+           },
+           { text: "texto nuevo 3" },
+           { text: "texto nuevo 4" },
+           { text: "texto nuevo 5" },
+         ],
+         color: null,
+         tags: ['otros 2', 'nuevo 2'],
+         remove: new Date(),
+         archive: false
+       },
+       {
+         key: 'note 5',
+         title: 'Estudio 5',
+         data: [
+           { text: "texto nuevo 1 $checked$" },
+           { text: "texto nuevo 2 $check$" },
+           {
+             list: [
+               { isChecked: false, text: 'Estilo 1' },
+               { isChecked: false, text: 'Estilo 3' },
+             ],
+             withCheck: false
+           },
+           { text: "texto nuevo 3" },
+           { text: "texto nuevo 4" },
+           { text: "texto nuevo 5" },
+         ],
+         color: "#e3b8b89a",
+         tags: ['otros 9'],
+         remove: null,
+         archive: false
+       },
+       {
+         key: 'note 6',
+         title: 'Estudio 6', data: [
+           { text: "texto nuevo 1 $checked$" },
+           { text: "texto nuevo 2 $check$" },
+           {
+             list: [
+               { isChecked: false, text: 'Estilo 1' },
+               { isChecked: false, text: 'Estilo 3' },
+             ],
+             withCheck: false
+           },
+           { text: "texto nuevo 3" },
+           { text: "texto nuevo 4" },
+           { text: "texto nuevo 5" },
+         ],
+         color: null,
+         tags: ['estilos'],
+         remove: null,
+         archive: false
+       },
+    ]
+
+*/

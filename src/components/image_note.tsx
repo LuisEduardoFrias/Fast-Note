@@ -1,9 +1,15 @@
-import { Image, View, Pressable, Text, Dimensions } from 'react-native'
-import { useState, useEffect, useRef } from 'react'
+import { Image, View, Pressable, StyleSheet, Text, Dimensions } from 'react-native'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Slider from '@react-native-community/slider'
 import { DeleteIcon } from '../icons'
 import { TypeUid, TypeImage as TypeImage_ } from '../types'
 import { useRouter } from 'expo-router'
+import { useActions } from 'subscriber_state'
+import CustomSlider from './custom_slider'
+
+import DefaultImage from '../assets/hide_image.png';
+
+const DEFAULT_IMAGE = Image.resolveAssetSource(DefaultImage).uri;
 
 type TypeImage = {
   noteKey: TypeUid,
@@ -13,9 +19,9 @@ type TypeImage = {
 export default function ImageNote({ noteKey, data }: TypeImage) {
   const router = useRouter();
   const { uri, key: imageKey, size: size_ } = data;
-
+  const { deleteImageToNote,  updateImage} = useActions();
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
-  const [size, setSize] = useState(size_ ?? (screenWidth / 4));
+  const [size, setSize] = useState(size_ ?? (screenWidth - 50));
   const timer = useRef(null);
   const [showControl, setShowControl] = useState(false);
 
@@ -23,6 +29,11 @@ export default function ImageNote({ noteKey, data }: TypeImage) {
     const subscription = Dimensions.addEventListener('change', () => {
       setScreenWidth(Dimensions.get('window').width);
     });
+
+    if (!uri) {
+      router.push(`/camera?noteKey=${noteKey}&imageKey=${imageKey}`)
+    }
+
     return () => subscription?.remove();
   }, []);
 
@@ -32,14 +43,10 @@ export default function ImageNote({ noteKey, data }: TypeImage) {
 
       timer.current = setTimeout(() => {
         setShowControl(false)
+        updateImage(noteKey, imageKey, {uri, size})
       }, 2000);
     }
   }, [showControl, size]);
-
-  const onDelete = () => {
-    // Implement delete logic here
-    console.log("Delete image");
-  };
 
   return (
     <Pressable className="bg-transluxed rounded p-2 pb-4 my-2 justify-center items-center"
@@ -50,24 +57,23 @@ export default function ImageNote({ noteKey, data }: TypeImage) {
         showControl &&
         <View className="flex-row justify-between items-center">
           <View className="w-11/12">
-            <Slider
+            <CustomSlider
               minimumValue={screenWidth / 4}
               maximumValue={screenWidth - 50}
-
-              minimumTrackTintColor="#FFFFFF"
-              maximumTrackTintColor="#000000"
+              Value={size}
+              step={screenWidth / 6}
+              defaultValue={size}
               onValueChange={(value) => setSize(value)}
             />
           </View>
 
-          <DeleteIcon onPress={onDelete} />
+          <DeleteIcon onPress={() => deleteImageToNote(noteKey, imageKey)} />
 
         </View>
       }
-      {!uri ?
-        <Image style={{ width: size, height: size }} source={{ uri: '../assets/hide_image.png' }} /> :
-        <Image style={{ width: size, height: size }} source={{ uri }} />
-      }
+      {uri ?
+        <Image style={{ width: size, height: size }} source={{ uri }} /> :
+        <Image style={{ width: size, height: size }} source={{ uri: DEFAULT_IMAGE }} />}
     </Pressable>
   );
 }

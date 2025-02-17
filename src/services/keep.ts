@@ -11,9 +11,10 @@ const getItem = async (key: string) => {
     return null;
   }
 };
-const setItem = async (key: string, obj: Object) => {
+const setItem = async (key: string, obj: TypeNote[]) => {
   try {
-    await AsyncStorage.setItem(key, JSON.stringify(obj));
+    console.log('save item: ', await AsyncStorage.setItem(key,
+      JSON.stringify(obj)))
     return obj;
   } catch (error) {
     return null;
@@ -37,8 +38,13 @@ export const getNotes = async () => await getData();
 
 export const getNote = async (key: Uid) => (await getData()).find((obj: TypeNote) => obj.key === key);
 
-export const putNote = async (obj: TypeNote) => {
-  const data: TypeNote[] = await getData();
+export const postNote = async (data: TypeNote[]) => {
+  console.log('keep save: ', data)
+  await setData(data);
+}
+
+export const putNote = async (data: TypeNote[]) => {
+  /*const data: TypeNote[] = await getData();
 
   if (!data)
     return await setData([obj])
@@ -46,11 +52,11 @@ export const putNote = async (obj: TypeNote) => {
   const index = data.findIndex((_obj_: TypeNote) => _obj_.key === obj.key);
 
   (index !== -1) ? data[index] = obj : data.push(obj);
-
+*/
   return await setData(data);
 };
 
-export const removeNote = async (key: Uid,datetime:Date ) => {
+export const removeNote = async (key: Uid, datetime: Date) => {
   const data = await getData()
 
   if (!data)

@@ -7,6 +7,7 @@ import { TypeUid } from '../src/types'
 import { CameraReverseIcon, GaleryIcons, FlashIcon, CheckIcon, RepeatIcon } from '../src/icons'
 import { useActions } from 'subscriber_state'
 import { useRouter, useLocalSearchParams } from 'expo-router'
+import Screen from '../src/components/screen'
 
 enum CameraType { 'back' = 'back', 'front' = 'front' }
 enum FlashMode { 'on' = 'on', 'off' = 'off' }
@@ -27,17 +28,24 @@ export default function Camara() {
   const cameraRef = useRef(null);
 
   if (!cameraPermission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!cameraPermission.granted) {
-    // Camera permissions are not granted yet.
     return (
-      <View className="flex-1 justifyContent-center">
-        <Text className="text-center pb-3">We need your cameraPermission to show the camera</Text>
-        <Button onPress={cameraRequestPermission} title="grant cameraPermission" />
-      </View>
+      <Screen css="items-center flex-1  justify-center">
+        <Text className="font-extrabold text-white text-center pb-3">We need your camera permission to show the camera</Text>
+        <Pressable
+          className="justify-center items-center h-20 bg-transluxed border border-gray-500 rounded-3xl w-7/12"
+          onPress={cameraRequestPermission}>
+          {
+            ({ pressed }) =>
+              <Text className={pressed ? "text-white" : "text-green-500"}>
+                Grant camera permission
+              </Text>
+          }
+        </Pressable>
+      </Screen >
     );
   }
 
@@ -46,6 +54,7 @@ export default function Camara() {
       try {
         const data = await cameraRef.current.takePictureAsync({ imageType: ImageType.png });
         setImage(data.uri);
+        
       } catch (error) {
         console.log(error)
       }
@@ -56,8 +65,9 @@ export default function Camara() {
     if (image) {
       try {
         const obj = await MediaLibrary.createAssetAsync(image);
-        updateImage(noteKey, imageKey, obj.uri)
+        updateImage(noteKey, imageKey,{ uri:obj.uri})
         setImage(null)
+        router.back();
       } catch (error) {
         console.log(error)
       }
@@ -73,7 +83,7 @@ export default function Camara() {
           //mirror={true}
           imageType={ImageType.png}
           facing={facing}
-          flash={flash}
+          flash={true}
           ref={cameraRef}
         //responsiveOrientationWhenOrientationLocked
         >
@@ -88,7 +98,7 @@ export default function Camara() {
 
           <View className="absolute bottom-5 w-full h-20 flex-row align-center justify-center">
             <GaleryIcons style={{ position: 'absolute', top: 15, left: 20 }}
-              color="#ffff" size={54} onPress={() => router.push('/galery')} />
+              color="#ffff" size={54} onPress={() => router.push('/gallery')} />
             <Pressable
               className="w-20 h-20 rounded-full border-4 border-yellow-300 active:border-amber-700 ring-offset-4 bg-transluxed"
               onPress={takePicture}>

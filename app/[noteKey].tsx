@@ -1,7 +1,6 @@
 import { Text, TextInput, ScrollView, View, Alert, Image, StyleSheet, Pressable, FlatList } from 'react-native'
 import { TypeNote, TypeText, TypeImage, TypeList, TypeUid } from '../src/types'
 import CheckBox from '../src/components/checkbox'
-import InputTitleNote from '../src/components/input_title_note'
 import InputMultilineNote from '../src/components/input_multiline_note'
 import ListNote from '../src/components/list_note'
 import ImageNote from '../src/components/image_note'
@@ -17,11 +16,7 @@ export default function Note() {
   const router = useRouter();
   const [{ notes }, actions] = useSubscriberState('notes', true, 'NoteEdit')
   const { addImageToNote, addTextToNote, addListToNote } = actions;
-  const { title, data, tags } = notes.find((obj: TypeNote) => obj.key === noteKey);
-
-  function handleImgC(key: TypeUid, text: string) {
-    addImageToNote(noteKey, { key, text });
-  }
+  const { data, tags } = notes.find((obj: TypeNote) => obj.key === noteKey);
 
   return (
     <View className="flex-1 bg-dark-theme">
@@ -32,11 +27,11 @@ export default function Note() {
               data?.map((obj: TypeText | TypeImage | TypeList) =>
                 <View key={obj.key}>
                   {
-                    (obj.text) ?
+                    (Object.keys(obj).includes('text')) ?
                       <InputMultilineNote key={obj.key} noteKey={noteKey} data={obj} />
-                      : (obj.uri) ?
+                      : (Object.keys(obj).includes('uri')) ?
                         <ImageNote key={obj.key} noteKey={noteKey} data={obj} />
-                        : (obj.list) ?
+                        : (Object.keys(obj).includes('list')) ?
                           <ListNote key={obj.key} noteKey={noteKey} data={obj} />
                           : null
                   }
