@@ -1,6 +1,6 @@
 import { createWarehouse, update } from 'subscriber_state'
 import { TypeNote, TypeUid, TypeImage, TypeText, TypeList } from '../types'
-import { getNotes, postNote } from '../services/keep'
+import { getNotes, postNote, clear } from '../services/keep'
 import uuid from 'react-native-uuid';
 
 type TypeState = {
@@ -391,8 +391,10 @@ const search = (value: string) => {
 
 /////////////////////////////
 
+
 (async () => {
   //feching para octener las notas de lss nuves
+  // await clear();
   const notes = await getNotes() ?? [];
 
   createWarehouse({

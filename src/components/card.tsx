@@ -18,9 +18,7 @@ export default function Card({ data, id }: TypeCard) {
   const router = useRouter();
   const isSelected = selectedNotes.includes(data.key);
   const selectIsOn = selectedNotes.length >= 1;
-
-  if (data?.remove || data?.archive) return;
-
+  
   return (
     <Pressable
       className={`border rounded-2xl border-2 h-48 

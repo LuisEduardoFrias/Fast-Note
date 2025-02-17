@@ -6,8 +6,8 @@ import AddButton from '../src/components/add_button'
 import Card from '../src/components/card'
 import Screen from '../src/components/screen'
 
-export default function Index() {
-  const [{ notes }, { addNote }] = useSubscriberState(['notes'], false, 'Index');
+export default function Archive() {
+  const [{ notes }, { addNote }] = useSubscriberState(['notes'], false, 'Archive');
   const router = useRouter();
 
   return (
@@ -24,7 +24,7 @@ export default function Index() {
         columnWrapperStyle={{ gap: 7 }}
         ItemSeparatorComponent={() => <View className="h-1"></View>}
         numColumns={2}
-        renderItem={({ item }) => (!item?.remove && !item?.archive) && <Card data={item} id={item.key} />}
+        renderItem={({ item }) => item?.archive && <Card data={item} id={item.key} />}
         keyExtractor={(item) => item.key}
       />
       <AddButton onPress={() => router.push(`/${addNote()}`)} />

@@ -1,99 +1,33 @@
-import { AsyncStorage } from 'react-native';
-import { TypeNote, Uid } from '../types'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TypeNote, Uid } from '../types';
 
-const getItem = async (key: string) => {
+export const getNotes = async (): Promise<TypeNote[] | null> => {
   try {
-    const value = await AsyncStorage.getItem(key);
+    const value = await AsyncStorage.getItem("@data");
     if (value !== null) {
-      return JSON.parse(value);
+      return JSON.parse(value) as TypeNote[];
     }
+    return null;
   } catch (error) {
+    console.error("Error getting notes:", error);
     return null;
   }
 };
-const setItem = async (key: string, obj: TypeNote[]) => {
+
+export const postNote = async (data: TypeNote[]): Promise<void> => {
   try {
-    console.log('save item: ', await AsyncStorage.setItem(key,
-      JSON.stringify(obj)))
-    return obj;
+    await AsyncStorage.setItem("@data", JSON.stringify(data));
   } catch (error) {
-    return null;
+    console.error("Error saving notes:", error);
+    throw new Error(`Error saving data to storage: ${error.message}`);
   }
 };
-const clear = async () => {
+
+export const clear = async (): Promise<void> => {
   try {
     await AsyncStorage.clear();
   } catch (error) {
-    const er = new Error(error);
-    throw er;
-  }
-};
-
-const getData = async () => getItem("@data");
-const setData = async (data: TypeNote[]) => setItem("@data", data);
-
-////////////////
-
-export const getNotes = async () => await getData();
-
-export const getNote = async (key: Uid) => (await getData()).find((obj: TypeNote) => obj.key === key);
-
-export const postNote = async (data: TypeNote[]) => {
-  console.log('keep save: ', data)
-  await setData(data);
-}
-
-export const putNote = async (data: TypeNote[]) => {
-  /*const data: TypeNote[] = await getData();
-
-  if (!data)
-    return await setData([obj])
-
-  const index = data.findIndex((_obj_: TypeNote) => _obj_.key === obj.key);
-
-  (index !== -1) ? data[index] = obj : data.push(obj);
-*/
-  return await setData(data);
-};
-
-export const removeNote = async (key: Uid, datetime: Date) => {
-  const data = await getData()
-
-  if (!data)
-    return null;
-
-  const index = data.findIndex((_obj_: TypeNote) => _obj_.key === key);
-
-  if (index === -1)
-    return null;
-
-  data[index].remove = datetime;
-
-  try {
-    await setData(data);
-    return datetime;
-  } catch (error) {
-    return null;
-  }
-
-};
-
-export const deleteNote = async (key: Uid) => {
-  const data = await getData()
-
-  if (!data)
-    return null;
-
-  const index = data.findIndex((_obj_: TypeNote) => _obj_.key === key);
-
-  if (index === -1)
-    return null;
-
-  try {
-    data.splice(index, 1);
-    await setData(data);
-    return key;
-  } catch (error) {
-    return null;
+    console.error("Error clearing storage:", error);
+    throw new Error(`Error clearing storage: ${error.message}`);
   }
 };

@@ -33,6 +33,14 @@ export default function Layout() {
           title: 'gallery',
           header: () => null
         }} />
+        <Stack.Screen name="archive" options={{
+          title: 'archive',
+          header: () =>
+            <View className="mt-8 px-2 pt-2 bg-dark-theme">
+              <Header />
+              <Text>Welcome to React Native!</Text>
+            </View>
+        }} />
       </Stack>
     </View>
   )
