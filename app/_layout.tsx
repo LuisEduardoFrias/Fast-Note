@@ -5,11 +5,13 @@ import Header from '../src/components/header'
 import 'core-js/actual/structured-clone';
 import '../src/warehouse'
 import InputTitleNote from '../src/components/input_title_note'
+import Drawer from '../src/components/drawer'
 
 export default function Layout() {
   return (
     <View style={{ flex: 1 }}>
       <StatusBar backgroundColor="rgb(36,36,36)" />
+            <Drawer />
       <Stack>
         <Stack.Screen name="index" options={{
           title: 'home',

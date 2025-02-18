@@ -12,7 +12,8 @@ export default function Header() {
     addTagOfSelect,
     archiveOfSelect,
     addColorOfSelect,
-    removeNoteOfSelect } = actions;
+    removeNoteOfSelect,
+    toggleMenu } = actions;
 
   function handleSearch(value: string) {
     fn(() => search(value))
@@ -40,7 +41,7 @@ export default function Header() {
   return (
     <View className="flex-row justify-between items-center px-2 rounded-2xl bg-black" >
       <View className="flex-row items-center w-min" >
-        <MenuIcon />
+        <MenuIcon onPress={() => toggleMenu()} />
 
         <TextInput
           className="text-white h-9"

@@ -5,11 +5,17 @@ import uuid from 'react-native-uuid';
 
 type TypeState = {
   notes: TypeNote[],
+  tags: string[],
+  seletedOption: number,
+  seletedTag: number,
   selectedNotes: TypeUid[],
   noteInEdition: TypeNote,
+  isOpenMenu: boolean,
 }
 
 type TypeActions = {
+  toggleMenu: () => void,
+  filterTags: (tag: string) => void,
   selectNote: (key: TypeUid) => void,
   clearSelectedNotes: () => void,
   addTag: (key: TypeUid, tag: string) => void,
@@ -36,6 +42,19 @@ type TypeActions = {
 }
 
 /////////////////////////////
+
+const filterTags = (tag) => {
+  update((state: TypeState) => {
+    return state.notes.find((note: TypeNote) => note.tags.includes(tag));
+  })
+}
+
+const toggleMenu = () => {
+  update((state: TypeState) => {
+    state.isOpenMenu = !state.isOpenMenu;
+    return state;
+  })
+}
 
 const selectNote = (key: TypeUid) => {
   update((state: TypeState) => {
@@ -401,7 +420,13 @@ const search = (value: string) => {
     notes: notes,
     selectedNotes: [],
     noteInEdition: null,
+    isOpenMenu: false,
+    tags: ['Musica', 'Acordes', 'Estudios biblicos', 'citas biblicas'],
+    seletedOption: 0,
+  seletedTag: -1,
 
+    filterTags,
+    toggleMenu,
     selectNote,
     clearSelectedNotes,
     addTag,
