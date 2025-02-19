@@ -28,7 +28,7 @@ function PressableIcon({ children, colorAction }: PressableIconProps) {
   const onPress = children.props.onPress;
 
   useEffect(() => {
-    if (!isPressed && typeof onPress === "function") {
+    if (isPressed && typeof onPress === "function") {
       onPress();
     }
   }, [isPressed])

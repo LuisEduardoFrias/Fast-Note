@@ -11,7 +11,6 @@ export default function Layout() {
   return (
     <View style={{ flex: 1 }}>
       <StatusBar backgroundColor="rgb(36,36,36)" />
-            <Drawer />
       <Stack>
         <Stack.Screen name="index" options={{
           title: 'home',
@@ -44,6 +43,7 @@ export default function Layout() {
             </View>
         }} />
       </Stack>
+      <Drawer />
     </View>
   )
 }

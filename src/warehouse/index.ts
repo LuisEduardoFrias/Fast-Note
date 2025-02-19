@@ -2,12 +2,13 @@ import { createWarehouse, update } from 'subscriber_state'
 import { TypeNote, TypeUid, TypeImage, TypeText, TypeList } from '../types'
 import { getNotes, postNote, clear } from '../services/keep'
 import uuid from 'react-native-uuid';
+import { menuOptions } from '../types'
 
 type TypeState = {
   notes: TypeNote[],
   tags: string[],
-  seletedOption: number,
-  seletedTag: number,
+  seletedOption: menuOptions,
+  seletedTag: string,
   selectedNotes: TypeUid[],
   noteInEdition: TypeNote,
   isOpenMenu: boolean,
@@ -15,6 +16,7 @@ type TypeState = {
 
 type TypeActions = {
   toggleMenu: () => void,
+  selectOption: (option: menuOptions) => void,
   filterTags: (tag: string) => void,
   selectNote: (key: TypeUid) => void,
   clearSelectedNotes: () => void,
@@ -45,7 +47,20 @@ type TypeActions = {
 
 const filterTags = (tag) => {
   update((state: TypeState) => {
-    return state.notes.find((note: TypeNote) => note.tags.includes(tag));
+    state.seletedTag = tag;
+    state.seletedOption = menuOptions.tags;
+    state.isOpenMenu = false;
+    state.notes.find((note: TypeNote) => note.tags.includes(tag));
+    return state;
+  })
+}
+
+const selectOption = (option: menuOptions) => {
+  update((state: TypeState) => {
+    state.seletedOption = option;
+    state.seletedTag = '__none__';
+    state.isOpenMenu = false;
+    return state;
   })
 }
 
@@ -416,41 +431,42 @@ const search = (value: string) => {
   // await clear();
   const notes = await getNotes() ?? [];
 
-  createWarehouse({
-    notes: notes,
-    selectedNotes: [],
-    noteInEdition: null,
-    isOpenMenu: false,
-    tags: ['Musica', 'Acordes', 'Estudios biblicos', 'citas biblicas'],
-    seletedOption: 0,
-  seletedTag: -1,
+createWarehouse({
+  notes: notes,
+  selectedNotes: [],
+  noteInEdition: null,
+  isOpenMenu: false,
+  tags: ['Musica', 'Acordes', 'Estudios biblicos', 'citas biblicas', 'Test lenght 25'],
+  seletedOption: menuOptions.notes,
+  seletedTag: '__none__',
 
-    filterTags,
-    toggleMenu,
-    selectNote,
-    clearSelectedNotes,
-    addTag,
-    archive,
-    addColor,
-    addTagOfSelect,
-    archiveOfSelect,
-    addColorOfSelect,
-    removeNoteOfSelect,
-    addNote,
-    addImageToNote,
-    addTextToNote,
-    addListToNote,
-    removeListToNote,
-    removeNote,
-    deleteNote,
-    deleteImageToNote,
-    updateNote,
-    updateImage,
-    addNoteInEdition,
-    removeNoteInEdition,
-    removeTextToNote,
-    search
-  });
+  selectOption,
+  filterTags,
+  toggleMenu,
+  selectNote,
+  clearSelectedNotes,
+  addTag,
+  archive,
+  addColor,
+  addTagOfSelect,
+  archiveOfSelect,
+  addColorOfSelect,
+  removeNoteOfSelect,
+  addNote,
+  addImageToNote,
+  addTextToNote,
+  addListToNote,
+  removeListToNote,
+  removeNote,
+  deleteNote,
+  deleteImageToNote,
+  updateNote,
+  updateImage,
+  addNoteInEdition,
+  removeNoteInEdition,
+  removeTextToNote,
+  search
+});
 
 })()
 
