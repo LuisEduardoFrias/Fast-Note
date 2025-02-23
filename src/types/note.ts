@@ -6,6 +6,8 @@ export type TypeText = { key: TypeUid, text: string };
 export type TypeListItem = { key: TypeUid, isChecked: boolean, text: string }
 export type TypeList = { key: TypeUid, title?: string, list: TypeListItem[], withCheck: boolean }
 
+export type TypeTag = { key: TypeUid, tag: string }
+
 export type TypeNote = {
   key: TypeUid,
   title: string | null,

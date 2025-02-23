@@ -27,7 +27,7 @@ export default function Archive() {
         renderItem={({ item }) => item?.archive && <Card data={item} id={item.key} />}
         keyExtractor={(item) => item.key}
       />
-      <AddButton onPress={() => router.push(`/${addNote()}`)} />
+
     </Screen>
   );
 }

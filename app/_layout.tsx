@@ -4,8 +4,10 @@ import { StatusBar } from 'expo-status-bar'
 import Header from '../src/components/header'
 import 'core-js/actual/structured-clone';
 import '../src/warehouse'
+import './index.css'
 import InputTitleNote from '../src/components/input_title_note'
 import Drawer from '../src/components/drawer'
+import { Search, Options } from '../src/components/index_header_option'
 
 export default function Layout() {
   return (
@@ -16,7 +18,10 @@ export default function Layout() {
           title: 'home',
           header: () =>
             <View className="mt-8 px-2 pt-2 bg-dark-theme">
-              <Header />
+              <Header>
+                <Search />
+                <Options />
+              </Header>
             </View>
         }} />
         <Stack.Screen name="[noteKey]" options={{
@@ -38,8 +43,49 @@ export default function Layout() {
           title: 'archive',
           header: () =>
             <View className="mt-8 px-2 pt-2 bg-dark-theme">
-              <Header />
-              <Text>Welcome to React Native!</Text>
+              <Header>
+                <Text className="text-white">Archive</Text>
+                <Options />
+              </Header>
+            </View>
+        }} />
+        <Stack.Screen name="bin" options={{
+          title: 'bin',
+          header: () =>
+            <View className="mt-8 px-2 pt-2 bg-dark-theme">
+              <Header>
+                <Text className="text-white">Bin</Text>
+                <Options />
+              </Header>
+            </View>
+        }} />
+        <Stack.Screen name="tag" options={{
+          title: 'tag',
+          header: () =>
+            <View className="mt-8 px-2 pt-2 bg-dark-theme">
+              <Header>
+                <Text className="text-white">Tags</Text>
+                <Options />
+              </Header>
+            </View>
+        }} />
+        <Stack.Screen name="select_tag" options={{
+          title: 'tag select',
+          header: () =>
+            <View className="mt-8 px-2 pt-2 bg-dark-theme">
+              <Header>
+						 <Text className="text-white">Select Tags</Text>
+              </Header>
+            </View>
+        }} />
+        <Stack.Screen name="about" options={{
+          title: 'about',
+          header: () =>
+            <View className="mt-8 px-2 pt-2 bg-dark-theme">
+              <Header>
+                <Text className="text-white">About</Text>
+                <Options />
+              </Header>
             </View>
         }} />
       </Stack>
